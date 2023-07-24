@@ -1,10 +1,10 @@
 ## 开发过程记录
 
-7.21
+### 7.21
 
 我们通过F12去查看，我们到底发送了什么包
 
-![image-20230721185848408](C:\Users\vic\AppData\Roaming\Typora\typora-user-images\image-20230721185848408.png)
+![image-20230721185848408](https://raw.githubusercontent.com/Vikyanite/talks/main/images/2023-07-24-211ad8-image-20230721185848408.png)
 
 结果神奇的发现，这网站居然是用PHP写的。不过没关系，我们忽略掉图片之后，很容易就能找到这个网站发出的请求是什么，也就是一个拥有`{查询名字，大区编号，起始搜索位置，结束搜索位置，搜索类型（LOL/云顶），SC}`这六个字段的表单。
 
@@ -21,6 +21,8 @@
 ![image-20230721190804931](https://raw.githubusercontent.com/Vikyanite/talks/main/images/2023-07-21-00efac-image-20230721190804931.png)
 
 看来`SC`字段是必传的，但是我们不大清楚`sc`到底是怎么来的。然后发现查询不同召唤师的`sc`还不同，不过查询同一个人的却是**相同**的。
+
+### 7.24
 
 ![image-20230724111414268](https://raw.githubusercontent.com/Vikyanite/talks/main/images/2023-07-24-5b58f6-image-20230724111414268.png)![image-20230724111346351](https://raw.githubusercontent.com/Vikyanite/talks/main/images/2023-07-24-71ac67-image-20230724111346351.png)
 
