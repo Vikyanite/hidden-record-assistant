@@ -97,3 +97,225 @@ gen("鸟倦飞知还", "1")
 特别感谢jsjiami.com！居然能解密，呜呜呜太激动了，还以为没办法了。
 
 至此，我们总算可以进行下一步用代码模拟请求了！
+
+----
+
+**模拟请求用Go写太简单了，跳过！**
+
+----
+
+然后就来到了处理数据的环节，也就是我们模拟请求，对方发回来的其实是一个**响应结构体**带着**一大段的HTML代码**，那么我们该怎么在这段HTML代码中**提取对我们有用的信息**呢？
+
+![image-20230724184757838](C:\Users\vic\AppData\Roaming\Typora\typora-user-images\image-20230724184757838.png)
+
+这个就留到明天再说吧~
+
+### 7.25
+
+我们可以发现发回来的是一个这样子的机构提，其中`zhanji`是web后台拼凑而成的超大的HTML的文本，其他的就是一些拼音组成的字段了
+
+```json
+{
+	"ec": 0,
+	"zhanji": "<div id...>",
+	"start": 10,
+	"end": 20,
+	"privacy": "<font color=\"#FF0000\">\u9690\u85cf<\/font>",
+	"lastGameDate": "2023-07-22",
+	"profileIconId": 4655,
+	"level": 522,
+	"dstb": "255",
+	"dsdj": "\u65e0",
+	"dssd": "0\u80dc\u70b9",
+	"lhtb": "255",
+	"lhdj": "\u65e0",
+	"lhsd": "0\u80dc\u70b9",
+	"skin": "<font color='#A52A2A'>\u82f1 \u96c4: 163<\/font>  |  <font color='#C48189'>\u76ae \u80a4: 131<\/font>",
+	"lhsf": "0\u80dc0\u8d1f",
+	"dssf": "0\u80dc0\u8d1f"
+}
+```
+
+Goland非常贴心，把上面JSON复制到文件里的时候会提示是否生成对应struct，于是我们得到如下响应结构体（注释是我根据拼音加的）：
+
+``` go
+type Resp struct {
+    // 暂时不知道
+	Ec            int    `json:"ec"`
+    // 战绩拼接html
+	Zhanji        string `json:"zhanji"`
+    // 查询起始
+	Start         int    `json:"start"`
+    // 查询结束
+	End           int    `json:"end"`
+    // 战绩是否隐藏
+	Privacy       string `json:"privacy"`
+    // 最后游戏时间
+	LastGameDate  string `json:"lastGameDate"`
+    // 召唤师头像对应图片id
+	ProfileIconId int    `json:"profileIconId"`
+    // 召唤师等级
+	Level         int    `json:"level"`
+    // 单双图标id
+	Dstb          string `json:"dstb"`
+    // 单双等级（段位）
+	Dsdj          string `json:"dsdj"`
+    // 单双胜点
+	Dssd          string `json:"dssd"`
+    // 灵活段位图标
+	Lhtb          string `json:"lhtb"`
+    // 灵活等级（段位）
+	Lhdj          string `json:"lhdj"`
+    // 灵活胜点
+	Lhsd          string `json:"lhsd"`
+    // 皮肤数
+	Skin          string `json:"skin"`
+    // 灵活胜负（x胜x负）
+	Lhsf          string `json:"lhsf"`
+    // 单双胜负（x胜x负）
+	Dssf          string `json:"dssf"`
+}
+```
+
+其中按照我们的需求，很多都是无用字段（召唤师头像、皮肤数等），然后**灵活对于打单双的我并没有什么参考价值**，我们需要的结构体就简化成下面，在命名上保留了源网站的原汁原味：
+
+```go
+type Resp struct {
+	// 战绩拼接html
+	Zhanji string `json:"zhanji"`
+	// 单双等级（段位）
+	Dsdj string `json:"dsdj"`
+	// 单双胜点
+	Dssd string `json:"dssd"`
+	// 单双胜负（x胜x负）
+	Dssf string `json:"dssf"`
+}
+```
+
+然后根据需求进行封装，就写出了两个文件：
+
+**struct.go**
+
+```go
+package query
+
+import (
+	"fmt"
+	"hidden-record-assistant/util"
+	"net/url"
+)
+
+func NewQueryForm(dq, name string) url.Values {
+	return url.Values{
+		"name":  {name},
+		"dq":    {dq},
+		"start": {"0"},
+		"end":   {"10"},
+		"type":  {"lol"},
+		"sc":    {util.MD5(name, dq)},
+	}
+}
+
+type RawResult struct {
+	// 战绩拼接html
+	Zhanji string `json:"zhanji"`
+	// 单双等级（段位）
+	Dsdj string `json:"dsdj"`
+	// 单双胜点
+	Dssd string `json:"dssd"`
+	// 单双胜负（x胜x负）
+	Dssf string `json:"dssf"`
+}
+
+func (r *RawResult) Cook() (ret Result) {
+	ret = Result{
+		Division: r.Dsdj,
+		WinPoint: r.Dssd,
+	}
+
+	fmt.Sscanf(r.Dssf, "%d胜%d负", &ret.WinCount, &ret.FailCount)
+
+	// 防止除0
+	if ret.WinCount+ret.FailCount != 0 {
+		ret.WinRate = float64(ret.WinCount) / float64(ret.WinCount+ret.FailCount)
+	}
+	ret.FightRecords = append(ret.FightRecords, GetFightRecords(r.Zhanji)...)
+	return
+}
+
+func GetFightRecords(str string) (ret []FightRecord) {
+
+	return
+}
+
+type Result struct {
+	// 胜负场
+	WinCount  int
+	FailCount int
+	// 胜率
+	WinRate float64
+	// 胜点
+	WinPoint string
+	// 段位
+	Division string
+	// 战绩
+	FightRecords []FightRecord
+}
+
+type FightRecord struct {
+	KDA   string
+	IsMVP bool
+	IsWin bool
+	// 比赛时间
+	GameTime string
+}
+```
+
+**service.go**
+
+```go
+package query
+
+import (
+	"encoding/json"
+	"io"
+	"net/http"
+)
+
+func SendQuery(dq, name string) (res Result, err error) {
+	formData := NewQueryForm(dq, name)
+	resp, err := http.PostForm("http://www.sslol.top/api/lol.php?act=cx", formData)
+	if err != nil {
+		return
+	}
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+	var rres RawResult
+	if err = json.Unmarshal(body, &rres); err != nil {
+		return
+	}
+	res = rres.Cook()
+	return
+}
+```
+
+然后重头来了，就是如何从`zhanji`这一大段HTML中提取出我们想要的信息，which means 正则表达式该登场了！让我们继续完善`GetFightRecords`函数，首先分析需求，我们需要的信息是：
+
+>- 单双排的记录
+>- 记录总的KDA
+>- 记录是否是MVP
+>- 是否胜利
+>- 游戏开始时间
+
+然后观察返回的HTML的结构（整理了一下）：
+
+![image-20230725174256340](https://raw.githubusercontent.com/Vikyanite/talks/main/images/2023-07-25-87de36-image-20230725174256340.png)
+
+不难发现正好对应的就是上面的查询召唤师相关信息，以及对局的相关信息：
+
+![image-20230725174219720](https://raw.githubusercontent.com/Vikyanite/talks/main/images/2023-07-25-a67bbe-image-20230725174219720.png)
+
