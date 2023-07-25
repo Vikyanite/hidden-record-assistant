@@ -1,14 +1,11 @@
 package main
 
 import (
-	md52 "crypto/md5"
 	"fmt"
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/widget"
-	"io"
-	"net/http"
-	"net/url"
+	"hidden-record-assistant/service/query"
 )
 
 func ShowUI() {
@@ -26,32 +23,15 @@ func ShowUI() {
 	w.ShowAndRun()
 }
 
-func MD5(name, dq string) string {
-	return fmt.Sprintf("%x", md52.Sum([]byte("name="+name+"dq-"+dq)))
-}
+func TestHTTP(name, dq string) (err error) {
+	res, _ := query.SendQuery(dq, name)
 
-func TestHTTP(name, dq string) {
-	data := url.Values{
-		"name":  {name},
-		"dq":    {dq},
-		"start": {"0"},
-		"end":   {"10"},
-		"type":  {"lol"},
-		"sc":    {MD5(name, dq)},
-	}
-	resp, err := http.PostForm("http://www.sslol.top/api/lol.php?act=cx", data)
-	if err != nil {
-		// handle error
-	}
-	defer resp.Body.Close()
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		// handle error
-		panic(err)
-	}
-	fmt.Println(string(body))
+	fmt.Printf("%+v\n", res.Division)
+	fmt.Printf("%+v\n", res.WinCount)
+
+	return
 }
 
 func main() {
-	TestHTTP("乞力马扎罗的雪丶", "1")
+	_ = TestHTTP("乞力马扎罗的雪丶", "1")
 }
