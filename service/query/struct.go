@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"golang.org/x/net/html"
 	"hidden-record-assistant/lib/htmlx"
+	"hidden-record-assistant/model"
 	"hidden-record-assistant/util"
 	"net/url"
 	"strings"
@@ -32,8 +33,8 @@ type RawResult struct {
 	Dssf string `json:"dssf"`
 }
 
-func (r *RawResult) Cook() (ret Result) {
-	ret = Result{
+func (r *RawResult) Cook() (ret model.Result) {
+	ret = model.Result{
 		Division: r.Dsdj,
 		WinPoint: r.Dssd,
 	}
@@ -48,7 +49,7 @@ func (r *RawResult) Cook() (ret Result) {
 	return
 }
 
-func GetFightRecords(str string) (ret []FightRecord) {
+func GetFightRecords(str string) (ret []model.FightRecord) {
 	defer func() func() {
 		pre := time.Now()
 		return func() {
@@ -76,7 +77,7 @@ func GetFightRecords(str string) (ret []FightRecord) {
 		return false
 	})
 	for i := range DSRecords {
-		temp := FightRecord{
+		temp := model.FightRecord{
 			KDA: GetKDA(DSRecords[i]),
 		}
 		temp.IsWin, temp.GameTime = GetGameTimeAndIsWin(DSRecords[i])
@@ -124,26 +125,4 @@ func GetGameTimeAndIsWin(node *html.Node) (IsWin bool, gameTime string) {
 	//fmt.Printf("winStr: %s gameTime: %s\n", winStr, gameTime)
 	IsWin = winStr == "胜利"
 	return
-}
-
-type Result struct {
-	// 胜负场
-	WinCount  int
-	FailCount int
-	// 胜率
-	WinRate float64
-	// 胜点
-	WinPoint string
-	// 段位
-	Division string
-	// 战绩
-	FightRecords []FightRecord
-}
-
-type FightRecord struct {
-	KDA   string
-	IsMVP bool
-	IsWin bool
-	// 比赛时间
-	GameTime string
 }
