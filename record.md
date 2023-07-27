@@ -359,17 +359,19 @@ func SendQuery(dq, name string) (res Result, err error) {
 
 ### 7.27
 
+ok，经过两天断断续续地施工总算把最简单的代码部分写好啦。接下来就是重头，也就是UI的设计，先上个草稿：
+
+![image-20230727184636742](https://raw.githubusercontent.com/Vikyanite/talks/main/images/2023-07-27-164d5e-image-20230727184636742.png)
+
+那我们就开始编写左边的界面吧~
+
+首先明确需求，我们需要三个框，**一个下拉框**，**一个输入框**，**一个按钮**。这些对于fyne来说都是小事~
+
+![image-20230727190509278](https://raw.githubusercontent.com/Vikyanite/talks/main/images/2023-07-27-3d6296-image-20230727190509278.png)
 
 
 
-
-
-
-
-
-
-
-
+也算是有点雏形了吧！
 
 
 
