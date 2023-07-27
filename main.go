@@ -23,15 +23,7 @@ func ShowUI() {
 	w.ShowAndRun()
 }
 
-func TestHTTP(name, dq string) (err error) {
-	res, _ := query.SendQuery(dq, name)
-
-	fmt.Printf("%+v\n", res.Division)
-	fmt.Printf("%+v\n", res.WinCount)
-
-	return
-}
-
 func main() {
-	_ = TestHTTP("乞力马扎罗的雪丶", "1")
+	res, err := query.SendQuery("1", "乞力马扎罗的雪丶")
+	fmt.Printf("%v %v\n", res, err)
 }

@@ -106,7 +106,7 @@ gen("鸟倦飞知还", "1")
 
 然后就来到了处理数据的环节，也就是我们模拟请求，对方发回来的其实是一个**响应结构体**带着**一大段的HTML代码**，那么我们该怎么在这段HTML代码中**提取对我们有用的信息**呢？
 
-![image-20230724184757838](C:\Users\vic\AppData\Roaming\Typora\typora-user-images\image-20230724184757838.png)
+![image-20230724184757838](https://raw.githubusercontent.com/Vikyanite/talks/main/images/2023-07-26-699009-image-20230724184757838.png)
 
 这个就留到明天再说吧~
 
@@ -307,7 +307,7 @@ func SendQuery(dq, name string) (res Result, err error) {
 
 >- 单双排的记录
 >- 记录总的KDA
->- 记录是否是MVP
+>- ~~记录是否是MVP~~
 >- 是否胜利
 >- 游戏开始时间
 
@@ -315,7 +315,71 @@ func SendQuery(dq, name string) (res Result, err error) {
 
 ![image-20230725174256340](https://raw.githubusercontent.com/Vikyanite/talks/main/images/2023-07-25-87de36-image-20230725174256340.png)
 
-不难发现正好对应的就是上面的查询召唤师相关信息，以及对局的相关信息：
+发现`mb-2`与`id=xxxxxx`正好有十组，不难发现正好对应的就是下面的查询召唤师相关信息，以及对局的相关信息：
 
 ![image-20230725174219720](https://raw.githubusercontent.com/Vikyanite/talks/main/images/2023-07-25-a67bbe-image-20230725174219720.png)
+
+然后发现其实关于对局信息的话，我好像不是很关心 ...之后我发现是否是MVP是wegame独有的评分机制，我似乎复现不了，暂时搁置这个功能吧（逃
+
+### 7.26
+
+发现这种HTML似乎不大需要**正则表达式**的登场，用Go的HTML解析库，解析为DOM树进行查找好像更快一点...
+
+因为，我们观察传来的HTML的结构体：
+
+```HTML
+ <div class="mb-2" data-bs-toggle="collapse" data-bs-target="#8174809037">
+                <div class="mobile-game-item mobile-game-item-loss">
+                    <div class="bar"></div>
+                    <div class="card">
+                        <div class="title">
+                            <div class="info">
+                                <span class="game-result">失败 | 用时:17:55</span>
+                            </div>
+                            <div class="right">
+                            <span class="type">单排/双排</span>
+                                <div class="relative time-stamp">
+                                    <div class="">2023-07-24 22:54</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="game-stats">
+                            <div class="kda">
+                                <div class="k-d-a">
+                                    <span>4</span> / <span class="d">4</span> / <span>5</span>
+                                </div>
+                                <div class="kda-ratio">2.25 KDA</div>
+                            </div>
+       ......
+```
+
+我们发现要完成我们的需求，只需要去找`class="mobile-game-item mobile-game-item-win/loss"`里面`class="type"`的内容为`单/双排`的相关信息（KDA、游戏时长、游戏起始时间等）就好了。
+
+（程式编写中...）
+
+### 7.27
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
