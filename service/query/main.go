@@ -2,11 +2,12 @@ package query
 
 import (
 	"encoding/json"
+	"hidden-record-assistant/model"
 	"io"
 	"net/http"
 )
 
-func SendQuery(dq, name string) (res Result, err error) {
+func SendQuery(dq, name string) (res model.Result, err error) {
 	formData := NewQueryForm(dq, name)
 	resp, err := http.PostForm("http://www.sslol.top/api/lol.php?act=cx", formData)
 	if err != nil {
