@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	//go:embed font/NotoSansSC-Regular.ttf
+	//go:embed font/msyh.ttf
 	FontBi []byte
 )
 
@@ -16,7 +16,7 @@ type MyTheme struct{}
 
 func (m *MyTheme) Font(fyne.TextStyle) fyne.Resource {
 	return &fyne.StaticResource{
-		StaticName:    "NotoSansSC-Regular.ttf",
+		StaticName:    "msyh.ttf",
 		StaticContent: FontBi,
 	}
 }
