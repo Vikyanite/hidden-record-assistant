@@ -8,8 +8,12 @@ import (
 	"fyne.io/fyne/v2/data/validation"
 	theme2 "fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
+	"hidden-record-assistant/model"
+	"hidden-record-assistant/service/query"
 	"hidden-record-assistant/view/theme"
+	"regexp"
 	"sort"
+	"strconv"
 	"strings"
 )
 
@@ -88,11 +92,16 @@ func mainPage(w fyne.Window) fyne.CanvasObject {
 			// 开始查询
 			str := strings.Split(input.Text, "\n")
 			bound := len(str)
-			if bound != 0 && str[bound-1] == "" {
-				bound--
+			// 取消所有的最后空行
+			for {
+				if bound != 0 && str[bound-1] == "" {
+					bound--
+				} else {
+					break
+				}
 			}
-
 			completeChan := make(chan struct{}, bound)
+			queryResults := make([]model.Result, bound)
 			for i := 0; i < bound; i++ {
 				go func(i int) {
 					defer func() {
@@ -102,20 +111,21 @@ func mainPage(w fyne.Window) fyne.CanvasObject {
 
 						}
 					}()
-					playerName := ""
-					_, err := fmt.Sscanf(str[i], "%s加入了房间", &playerName)
+					//采用正则表达式匹配
+					re := regexp.MustCompile(`^(.*?)加入了房间$`)
+					match := re.FindStringSubmatch(str[i])
+					if len(match) <= 1 {
+						// TODO 提示错误
+						return
+					}
+					playerName := match[1]
+
+					res, err := query.SendQuery(strconv.Itoa(DqNum), playerName)
 					if err != nil {
 						// TODO 提示错误
 						return
 					}
-
-					//TODO 接下来是需要把res插入到查询界面中用于显示
-					//res, err := query.SendQuery(playerName, strconv.Itoa(DqNum))
-					//if err != nil {
-					//	// TODO 提示错误
-					//	return
-					//}
-
+					queryResults[i] = res
 				}(i)
 			}
 
@@ -123,7 +133,7 @@ func mainPage(w fyne.Window) fyne.CanvasObject {
 			for i := 0; i < bound; i++ {
 				<-completeChan
 			}
-			w.SetContent(queryPage(w))
+			w.SetContent(queryPage(w, queryResults))
 		},
 		OnCancel: func() {
 
@@ -138,13 +148,40 @@ func loadingPage(w fyne.Window) fyne.CanvasObject {
 	)
 }
 
-func queryPage(w fyne.Window) fyne.CanvasObject {
-	// TODO 设计查询结果界面
-	return container.NewVBox(
-		widget.NewLabel(fmt.Sprintf("大区: %d", DqNum)),
+func queryPage(w fyne.Window, queryResults []model.Result) fyne.CanvasObject {
+	d := displayPage(w, queryResults)
+	return container.NewBorder(nil,
 		widget.NewButtonWithIcon("返回", theme2.NavigateBackIcon(), func() {
 			DqNum = 1 // 因为默认是艾欧尼亚
 			w.SetContent(mainPage(w))
 		}),
+		nil, nil,
+		d,
 	)
+}
+
+func displayPage(w fyne.Window, queryResults []model.Result) fyne.CanvasObject {
+	tabs := make([]*container.TabItem, len(queryResults))
+	for i := 0; i < len(queryResults); i++ {
+		tabs[i] = container.NewTabItem(queryResults[i].Name, displayItemPage(queryResults[i]))
+	}
+	return container.NewAppTabs(tabs...)
+}
+
+func displayItemPage(data model.Result) fyne.CanvasObject {
+	obj := container.NewHSplit(
+		container.NewGridWithRows(6,
+			container.NewHBox(
+				widget.NewLabel("段位："+data.Division),
+				widget.NewLabel("胜点："+strconv.Itoa(data.WinPoint)),
+			),
+			container.NewBorder(nil, nil, nil, widget.NewLabel("（最近20场排位表现）")),
+			widget.NewLabel("胜率："+fmt.Sprintf("%.2f%%", 100.0*data.WinRate)),
+			widget.NewLabel("胜场数："+strconv.Itoa(data.WinCount)),
+			widget.NewLabel("败场数："+strconv.Itoa(data.FailCount)),
+		),
+		// TODO 最近战绩展示界面
+		widget.NewLabel("最近战绩展示界面"),
+	)
+	return obj
 }

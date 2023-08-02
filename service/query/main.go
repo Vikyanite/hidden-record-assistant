@@ -25,5 +25,6 @@ func SendQuery(dq, name string) (res model.Result, err error) {
 	}
 
 	res = rres.Cook()
+	res.Name = name
 	return
 }

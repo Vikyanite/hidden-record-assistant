@@ -29,23 +29,28 @@ type RawResult struct {
 	Dsdj string `json:"dsdj"`
 	// 单双胜点
 	Dssd string `json:"dssd"`
-	// 单双胜负（x胜x负）
-	Dssf string `json:"dssf"`
 }
 
 func (r *RawResult) Cook() (ret model.Result) {
 	ret = model.Result{
 		Division: r.Dsdj,
-		WinPoint: r.Dssd,
 	}
 
-	fmt.Sscanf(r.Dssf, "%d胜%d负", &ret.WinCount, &ret.FailCount)
+	fmt.Sscanf(r.Dssd, "%d胜点", &ret.WinPoint)
+
+	ret.FightRecords = append(ret.FightRecords, GetFightRecords(r.Zhanji)...)
+	for i := range ret.FightRecords {
+		if ret.FightRecords[i].IsWin {
+			ret.WinCount++
+		} else {
+			ret.FailCount++
+		}
+	}
 
 	// 防止除0
 	if ret.WinCount+ret.FailCount != 0 {
 		ret.WinRate = float64(ret.WinCount) / float64(ret.WinCount+ret.FailCount)
 	}
-	ret.FightRecords = append(ret.FightRecords, GetFightRecords(r.Zhanji)...)
 	return
 }
 
