@@ -16,6 +16,21 @@ type Result struct {
 	FightRecords []FightRecord
 }
 
+func (r *Result) CalWinDefeat() {
+	for i := range r.FightRecords {
+		if r.FightRecords[i].IsWin {
+			r.WinCount++
+		} else {
+			r.FailCount++
+		}
+	}
+
+	// 防止除0
+	if r.WinCount+r.FailCount != 0 {
+		r.WinRate = float64(r.WinCount) / float64(r.WinCount+r.FailCount)
+	}
+}
+
 type FightRecord struct {
 	KDA   string
 	IsMVP bool

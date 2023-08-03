@@ -7,18 +7,39 @@ import (
 	"hidden-record-assistant/model"
 	"hidden-record-assistant/util"
 	"net/url"
+	"strconv"
 	"strings"
 	"time"
 )
 
-func NewQueryForm(dq, name string) url.Values {
-	return url.Values{
+type QueryForm url.Values
+
+func NewQueryForm(dq, name string) QueryForm {
+	return QueryForm{
 		"name":  {name},
 		"dq":    {dq},
 		"start": {"0"},
 		"end":   {"10"},
 		"type":  {"lol"},
 		"sc":    {util.MD5(name, dq)},
+	}
+}
+
+func (q QueryForm) Form() url.Values {
+	return url.Values(q)
+}
+
+func (q QueryForm) NextNPage(plusNum int) QueryForm {
+	start, _ := strconv.Atoi(q["start"][0])
+	end, _ := strconv.Atoi(q["end"][0])
+
+	return QueryForm{
+		"name":  {q["name"][0]},
+		"dq":    {q["dq"][0]},
+		"start": {strconv.Itoa(start + plusNum)},
+		"end":   {strconv.Itoa(end + plusNum)},
+		"type":  {q["type"][0]},
+		"sc":    {q["sc"][0]},
 	}
 }
 
@@ -35,22 +56,8 @@ func (r *RawResult) Cook() (ret model.Result) {
 	ret = model.Result{
 		Division: r.Dsdj,
 	}
-
 	fmt.Sscanf(r.Dssd, "%d胜点", &ret.WinPoint)
-
 	ret.FightRecords = append(ret.FightRecords, GetFightRecords(r.Zhanji)...)
-	for i := range ret.FightRecords {
-		if ret.FightRecords[i].IsWin {
-			ret.WinCount++
-		} else {
-			ret.FailCount++
-		}
-	}
-
-	// 防止除0
-	if ret.WinCount+ret.FailCount != 0 {
-		ret.WinRate = float64(ret.WinCount) / float64(ret.WinCount+ret.FailCount)
-	}
 	return
 }
 

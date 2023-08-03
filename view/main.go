@@ -120,7 +120,7 @@ func mainPage(w fyne.Window) fyne.CanvasObject {
 					}
 					playerName := match[1]
 
-					res, err := query.SendQuery(strconv.Itoa(DqNum), playerName)
+					res, err := query.QueryN(strconv.Itoa(DqNum), playerName, 2)
 					if err != nil {
 						// TODO 提示错误
 						return
@@ -175,7 +175,7 @@ func displayItemPage(data model.Result) fyne.CanvasObject {
 				widget.NewLabel("段位："+data.Division),
 				widget.NewLabel("胜点："+strconv.Itoa(data.WinPoint)),
 			),
-			container.NewBorder(nil, nil, nil, widget.NewLabel("（最近20场排位表现）")),
+			container.NewBorder(nil, nil, nil, widget.NewLabel("（最近20场游戏中排位表现）")),
 			widget.NewLabel("胜率："+fmt.Sprintf("%.2f%%", 100.0*data.WinRate)),
 			widget.NewLabel("胜场数："+strconv.Itoa(data.WinCount)),
 			widget.NewLabel("败场数："+strconv.Itoa(data.FailCount)),
