@@ -62,11 +62,11 @@ func Show() {
 
 func mainPage(w fyne.Window) fyne.CanvasObject {
 	input := widget.NewMultiLineEntry()
-	examplePlayerNames := "玩家1加入了房间\n" +
-		"玩家2加入了房间\n" +
+	examplePlayerNames := "玩家1加入了队伍聊天\n" +
+		"玩家2加入了队伍聊天\n" +
 		"..."
 	input.SetPlaceHolder(examplePlayerNames)
-	input.Validator = validation.NewRegexp(`^(?:.*加入了房间\n)*.*加入了房间[\n]*$`, "请按照'xxx加入了房间'的格式输入")
+	input.Validator = validation.NewRegexp(`^(?:.*加入了队伍聊天\n)*.*加入了队伍聊天[\n]*$`, "请按照'xxx加入了队伍聊天'的格式输入")
 
 	var form *widget.Form
 	selector := widget.NewSelect(
@@ -112,7 +112,7 @@ func mainPage(w fyne.Window) fyne.CanvasObject {
 						}
 					}()
 					//采用正则表达式匹配
-					re := regexp.MustCompile(`^(.*?)加入了房间$`)
+					re := regexp.MustCompile(`^(.*?)加入了队伍聊天$`)
 					match := re.FindStringSubmatch(str[i])
 					if len(match) <= 1 {
 						// TODO 提示错误
