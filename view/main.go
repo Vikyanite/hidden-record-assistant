@@ -11,7 +11,6 @@ import (
 	"hidden-record-assistant/model"
 	"hidden-record-assistant/service/query"
 	"hidden-record-assistant/view/theme"
-	"regexp"
 	"sort"
 	"strconv"
 	"strings"
@@ -30,6 +29,8 @@ func (m DqSlice) Less(i, j int) bool {
 func (m DqSlice) Swap(i, j int) {
 	m[i], m[j] = m[j], m[i]
 }
+
+const KeyWord = "加入了队伍聊天"
 
 var (
 	DqMap = map[string]int{
@@ -62,11 +63,11 @@ func Show() {
 
 func mainPage(w fyne.Window) fyne.CanvasObject {
 	input := widget.NewMultiLineEntry()
-	examplePlayerNames := "玩家1加入了队伍聊天\n" +
-		"玩家2加入了队伍聊天\n" +
+	examplePlayerNames := "玩家1" + KeyWord + "\n" +
+		"玩家2" + KeyWord + "\n" +
 		"..."
 	input.SetPlaceHolder(examplePlayerNames)
-	input.Validator = validation.NewRegexp(`^(?:.*加入了队伍聊天\n)*.*加入了队伍聊天[\n]*$`, "请按照'xxx加入了队伍聊天'的格式输入")
+	input.Validator = validation.NewRegexp(`^(.+`+KeyWord+`\s*)+$`, "请按照'xxx'"+KeyWord+"'的格式输入")
 
 	var form *widget.Form
 	selector := widget.NewSelect(
@@ -89,17 +90,12 @@ func mainPage(w fyne.Window) fyne.CanvasObject {
 			// 先进入到查询过度界面
 			w.SetContent(loadingPage(w))
 
-			// 开始查询
-			str := strings.Split(input.Text, "\n")
+			// 去除换行符
+			inputText := strings.Replace(strings.Replace(input.Text, "\n", "", -1), "\r", "", -1)
+			str := strings.Split(inputText, KeyWord)
+			str = str[:len(str)-1]
 			bound := len(str)
-			// 取消所有的最后空行
-			for {
-				if bound != 0 && str[bound-1] == "" {
-					bound--
-				} else {
-					break
-				}
-			}
+
 			completeChan := make(chan struct{}, bound)
 			queryResults := make([]model.Result, bound)
 			for i := 0; i < bound; i++ {
@@ -111,16 +107,7 @@ func mainPage(w fyne.Window) fyne.CanvasObject {
 
 						}
 					}()
-					//采用正则表达式匹配
-					re := regexp.MustCompile(`^(.*?)加入了队伍聊天$`)
-					match := re.FindStringSubmatch(str[i])
-					if len(match) <= 1 {
-						// TODO 提示错误
-						return
-					}
-					playerName := match[1]
-
-					res, err := query.QueryN(strconv.Itoa(DqNum), playerName, 2)
+					res, err := query.QueryN(strconv.Itoa(DqNum), str[i], 2)
 					if err != nil {
 						// TODO 提示错误
 						return
