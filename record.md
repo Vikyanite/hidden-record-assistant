@@ -381,15 +381,107 @@ ok，经过两天断断续续地施工总算把最简单的代码部分写好啦
 
 真没想到随便写的小玩具能得到两位网友的issue，这让我有点受宠若惊。他们两位提到的都是非常关键的问题，目前已经在筹备的路上了。不过现阶段还是应该要把fyne+爬取网页信息这一版完成之后，再去考虑其他的方式。
 
+今天主要的任务是考虑如何把输入页面的数据传给查询界面，在实现的途中我发现原来fyne是由form组件的，于是就抛弃了布局，直接采用form-item的方式。
 
+修改了界面之后，主要就是大区跟对应id的对应了，这个还算简单，毕竟爬取的网页已经有了，直接对应上就好：
 
+```html
+<select id="dq" class="form-select">
+	<option value="999">选择大区</option>    
+    <option value="1">艾欧尼亚</option>
+    <option value="2">比尔吉沃特 </option>
+    <option value="3">祖安</option>
+    <option value="4">诺克萨斯</option>
+    <option value="6">德玛西亚</option>
+    <option value="5">班德尔城</option>
+    <option value="7">皮尔特沃夫</option>
+    <option value="8">战争学院</option>
+    <option value="9">弗雷尔卓德</option>
+    <option value="10">巨神峰</option>
+    <option value="11">雷瑟守备</option>
+    <option value="12">无畏先锋</option>
+    <option value="13">裁决之地</option>
+    <option value="14">黑色玫瑰</option>
+    <option value="15">暗影岛</option>
+    <option value="17">钢铁烈阳</option>
+    <option value="16">恕瑞玛</option>
+    <option value="18">水晶之痕</option>
+    <option value="22">影流</option>
+    <option value="23">守望之海</option>
+    <option value="20">扭曲丛林</option>
+    <option value="24">征服之海</option>
+    <option value="25">卡拉曼达</option>
+    <option value="27">皮城警备</option>
+    <option value="26">巨龙之巢</option>
+    <option value="19">均衡教派</option>
+    <option value="30">男爵领域</option> 
+    <option value="31">峡谷之巅</option> 
+</select>
+```
 
+不过这在Go中我用的是`map[string]int`进行存储，但是Go中的map每次遍历的顺序都是不同的，但是fyne的下拉框`selector`需要获取所有的大区key作为选项才可以。所以我们就需要一个办法让大区的数组选项排序是以大区id进行排序的，这在C++中比较简单，但是在Go中就比较麻烦了，要采用以下做法：
 
+```go
+type DqSlice []string
 
+func (m DqSlice) Len() int {
+	return len(m)
+}
 
+func (m DqSlice) Less(i, j int) bool {
+	return DqMap[m[i]] < DqMap[m[j]]
+}
 
+func (m DqSlice) Swap(i, j int) {
+	m[i], m[j] = m[j], m[i]
+}
 
+var (
+	DqMap = map[string]int{
+		"艾欧尼亚": 1, "比尔吉沃特": 2, "祖安": 3, "诺克萨斯": 4, "班德尔城": 5, "德玛西亚": 6, "皮尔特沃夫": 7,
+		"战争学院": 8, "弗雷尔卓德": 9, "巨神峰": 10, "雷瑟守备": 11, "裁决之地": 13, "黑色玫瑰": 14, "暗影岛": 15,
+		"恕瑞玛": 16, "钢铁烈阳": 17, "水晶之痕": 18, "均衡教派": 19, "扭曲丛林": 20, "影流": 22, "守望之海": 23,
+		"征服之海": 24, "卡拉曼达": 25, "巨龙之巢": 26, "皮城警备": 27, "男爵领域": 30, "峡谷之巅": 31,
+	}
+	DqNames DqSlice
+	DqNum   int
+)
 
+func init() {
+	for k, _ := range DqMap {
+		DqNames = append(DqNames, k)
+	}
+	sort.Sort(DqNames)
+}
+```
 
+这样以后`DqNames`就是有序的了。
 
+-----
+
+在选项处理好之后我们需要处理文本输入的事情了，我们知道排位进入房间，在选英雄的时候左下角会出现"xxx加入了房间"的话，如下图（这里我网上找不到国服的图片，就用外服的了）：
+
+![image-20230731111021946](https://raw.githubusercontent.com/Vikyanite/talks/main/images/2023-07-31-b79fe7-image-20230731111021946.png)
+
+所以我们需要能检测用户输入是否是"xxx进入了房间"这样的形式，同时需要忽略后面的换行。fyne提供了一个挺好用的输入检测，即`Validation`。所以我们就新建一个正则表达式的`Validation`，即`^(?:.*加入了房间\n)*.*加入了房间[\n]*$`。于是输入检测这部分就完成了~
+
+----
+
+然而我们可以发现就算`selector`不选也可以提交，这显然不符合我们的预期。fyne对form中的selector并没有提供支持，于是我们只能用别的办法来实现这个效果。我原本打算用`form.Enable()`与`form.Disable()`两个函数来实现的，但是这两个函数只能在渲染之后才能调用，也就意味着我需要把这个函数放到`RunAndShow()`之后，就变得非常复杂了。于是我们转了一种思路，也就是给Selector一开始就设置了一个默认值，因为我们发现下拉框其实是没有`选择任意一项`这个选项的，所以他不可能选到最开始的状态，于是这个问题就被规避掉了。
+
+接下来我们就该考虑该如何把数据传到`SendQuery`函数里面，并生成对应玩家条目来展示查询的资料了。
+
+### 7.31
+
+查询界面的这个每个Item的设计是真的好恶心啊，fyne对于List嵌套Layout支持好差啊。
+
+```go
+func NewList(length func() int, createItem func() fyne.CanvasObject, updateItem func(ListItemID, fyne.CanvasObject)) *List
+```
+
+这个List的`updateItem`，只能获取到`fyne.CanvasObject`，也就是我只能获取到这个`Layout`对象，但是fyne中获取到这个对象却没办法获得对象里面的东西，除非自己封装了一个实现`fyne.CanvasObject`接口的Struct...在fyne中，并没有像web中的选择器一样的东西，就写得非常的恶心。
+
+在尝试了一个下午之后，我决定还是使用`fyne.AppTabs`来实现这个功能。同时还发现了一个字体的bug，也就是现在在用的字体显示不出来`丶`这个字...等下修一下。
+
+之后发现了之前使用`fmt.Sscanf`的一个问题，也就是他并不会按照我预期，从"xxx加入了房间"提取出"xxx"来。给我报了个什么什么"EOF"的错误，于是转用正则来提取。
 

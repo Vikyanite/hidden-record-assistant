@@ -35,6 +35,12 @@ type FightRecord struct {
 	KDA   string
 	IsMVP bool
 	IsWin bool
+	// 选取英雄
+	Hero string
+	// 角色
+	Role string
+	// 比赛时长
+	GameLen string
 	// 比赛时间
 	GameTime string
 }

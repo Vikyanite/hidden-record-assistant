@@ -75,10 +75,10 @@ func GetFightRecords(str string) (ret []model.FightRecord) {
 		return
 	}
 
-	// 找到 "mobile-game-item mobile-game-item"类下的"type"类的Context为"单排/双排"的节点
-	DSRecords := htmlx.FindElements(root, func(n *html.Node) bool {
+	// 找到 "mb-2"类下的"type"类的Context为"单排/双排"的节点
+	nodes := htmlx.FindElements(root, func(n *html.Node) bool {
 		for _, attr := range n.Attr {
-			if attr.Key == "class" && strings.HasPrefix(attr.Val, "mobile-game-item mobile-game-item-") {
+			if attr.Key == "class" && attr.Val == "mb-2" {
 				found := htmlx.FindElement(n, htmlx.HasClass("type"))
 				if found == nil {
 					return false
@@ -88,13 +88,25 @@ func GetFightRecords(str string) (ret []model.FightRecord) {
 		}
 		return false
 	})
-	for i := range DSRecords {
+	for i := range nodes {
 		temp := model.FightRecord{
-			KDA: GetKDA(DSRecords[i]),
+			KDA:      GetKDA(nodes[i]),
+			GameTime: GetGameTime(nodes[i]),
+			Role:     GetRole(nodes[i]),
 		}
-		temp.IsWin, temp.GameTime = GetGameTimeAndIsWin(DSRecords[i])
+		temp.IsWin, temp.GameLen = GetGameLenAndIsWin(nodes[i])
 		ret = append(ret, temp)
 	}
+	return
+}
+
+func GetGameTime(node *html.Node) (gtime string) {
+	found := htmlx.FindElement(node, htmlx.HasClass("relative time-stamp"))
+	if found == nil {
+		return
+	}
+	gtime = htmlx.GetTextContent(found.FirstChild)
+	fmt.Printf(gtime)
 	return
 }
 
@@ -122,9 +134,9 @@ func GetKDA(node *html.Node) (KDA string) {
 	return
 }
 
-// GetGameTimeAndIsWin 提取游戏时间和是否胜利信息
+// GetGameLenAndIsWin 提取游戏时间和是否胜利信息
 // 按规范不应该两个信息放在一个函数里提取，但是方便捏~
-func GetGameTimeAndIsWin(node *html.Node) (IsWin bool, gameTime string) {
+func GetGameLenAndIsWin(node *html.Node) (IsWin bool, gameTime string) {
 	found := htmlx.FindElement(node, htmlx.HasClass("game-result"))
 	if found == nil {
 		return
@@ -136,5 +148,15 @@ func GetGameTimeAndIsWin(node *html.Node) (IsWin bool, gameTime string) {
 	}
 	//fmt.Printf("winStr: %s gameTime: %s\n", winStr, gameTime)
 	IsWin = winStr == "胜利"
+	return
+}
+
+func GetRole(node *html.Node) (role string) {
+	found := htmlx.FindElement(node, htmlx.HasClass("role"))
+	if found == nil {
+		return
+	}
+	role = htmlx.GetTextContent(found)
+	fmt.Printf(role)
 	return
 }

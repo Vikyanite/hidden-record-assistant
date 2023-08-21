@@ -1,12 +1,9 @@
 package view
 
 import (
-	"fmt"
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
-	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/data/validation"
-	theme2 "fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
 	"hidden-record-assistant/model"
 	"hidden-record-assistant/service/query"
@@ -127,48 +124,4 @@ func mainPage(w fyne.Window) fyne.CanvasObject {
 		},
 	}
 	return form
-}
-
-func loadingPage(w fyne.Window) fyne.CanvasObject {
-	return container.NewVBox(
-		widget.NewLabel("正在查询中..."),
-	)
-}
-
-func queryPage(w fyne.Window, queryResults []model.Result) fyne.CanvasObject {
-	d := displayPage(w, queryResults)
-	return container.NewBorder(nil,
-		widget.NewButtonWithIcon("返回", theme2.NavigateBackIcon(), func() {
-			DqNum = 1 // 因为默认是艾欧尼亚
-			w.SetContent(mainPage(w))
-		}),
-		nil, nil,
-		d,
-	)
-}
-
-func displayPage(w fyne.Window, queryResults []model.Result) fyne.CanvasObject {
-	tabs := make([]*container.TabItem, len(queryResults))
-	for i := 0; i < len(queryResults); i++ {
-		tabs[i] = container.NewTabItem(queryResults[i].Name, displayItemPage(queryResults[i]))
-	}
-	return container.NewAppTabs(tabs...)
-}
-
-func displayItemPage(data model.Result) fyne.CanvasObject {
-	obj := container.NewHSplit(
-		container.NewGridWithRows(6,
-			container.NewHBox(
-				widget.NewLabel("段位："+data.Division),
-				widget.NewLabel("胜点："+strconv.Itoa(data.WinPoint)),
-			),
-			container.NewBorder(nil, nil, nil, widget.NewLabel("（最近20场游戏中排位表现）")),
-			widget.NewLabel("胜率："+fmt.Sprintf("%.2f%%", 100.0*data.WinRate)),
-			widget.NewLabel("胜场数："+strconv.Itoa(data.WinCount)),
-			widget.NewLabel("败场数："+strconv.Itoa(data.FailCount)),
-		),
-		// TODO 最近战绩展示界面
-		widget.NewLabel("最近战绩展示界面"),
-	)
-	return obj
 }
