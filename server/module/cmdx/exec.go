@@ -1,7 +1,7 @@
 package cmdx
 
 import (
-	"hidden-record-assistant/module/errs"
+	"hidden-record-assistant/server/module/errs"
 	"os/exec"
 	"strings"
 )

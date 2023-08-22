@@ -1,7 +1,7 @@
 package httpx
 
 import (
-	"hidden-record-assistant/module/zlog"
+	"hidden-record-assistant/server/module/zlog"
 	"net/http"
 )
 

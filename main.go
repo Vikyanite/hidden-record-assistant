@@ -1,16 +1,36 @@
 package main
 
 import (
-	"hidden-record-assistant/module/cmdx"
-	"hidden-record-assistant/module/httpx"
-	"hidden-record-assistant/module/zlog"
+	"embed"
+
+	"github.com/wailsapp/wails/v2"
+	"github.com/wailsapp/wails/v2/pkg/options"
+	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
 )
 
+//go:embed all:frontend/dist
+var assets embed.FS
+
 func main() {
-	resMap, err := cmdx.ExecWmicToMap()
+	// Create an instance of the app structure
+	app := NewApp()
+
+	// Create application with options
+	err := wails.Run(&options.App{
+		Title:  "hidden-record-assistant",
+		Width:  1024,
+		Height: 768,
+		AssetServer: &assetserver.Options{
+			Assets: assets,
+		},
+		BackgroundColour: &options.RGBA{R: 27, G: 38, B: 54, A: 1},
+		OnStartup:        app.startup,
+		Bind: []interface{}{
+			app,
+		},
+	})
+
 	if err != nil {
-		zlog.Error(err.Error())
-		return
+		println("Error:", err.Error())
 	}
-	httpx.InitClient(resMap["remoting-auth-token"], resMap["riotclient-app-port"])
 }
