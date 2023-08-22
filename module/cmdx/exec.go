@@ -3,6 +3,7 @@ package cmdx
 import (
 	"hidden-record-assistant/module/errs"
 	"os/exec"
+	"strings"
 )
 
 func Exec(name string, arg ...string) ([]byte, error) {
@@ -18,9 +19,15 @@ func ExecWmicToMap() (retMap map[string]string, err error) {
 		return
 	}
 
+	var ClientIsStarted = strings.HasPrefix(string(res), "CommandLine")
+
 	retMap = FlagsToMap(res)
 	if len(retMap) == 0 {
-		err = errs.ErrNeedAdmin
+		if ClientIsStarted {
+			err = errs.ErrNeedAdmin
+		} else {
+			err = errs.ErrCantFindClient
+		}
 		return
 	}
 	return
