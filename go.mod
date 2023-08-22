@@ -1,4 +1,4 @@
-module changeme
+module hidden-record-assistant
 
 go 1.18
 
