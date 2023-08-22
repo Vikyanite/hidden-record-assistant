@@ -3,6 +3,10 @@ UPDATE 2023/8.21:
 
 不过这个网站时灵时不灵的，于是就狠下心学习了Riot开放的LCUAPI的用法，直接从拳头那里查数据，而不依赖这个网站了，同时也改用Wails框架，这也就是这个分支的目的~
 
+UPDATE 2023/8.22:
+
+大概花了一天时间研究了一下，是否有通过其他接口的方式不用打开LOL客户端，起个后台程序之类的就可以直接使用LCUAPI的方式，很遗憾并没有成功。于是还是同大伙一样，需要登录LOL客户端之后才能运行本程序。不过我还是很好奇，那么WeGame又是怎么做到调用LCUAPI的呢，难道它并没有使用LCUAPI？
+
 ## 前言
 
 之前因为听说查战绩能提高单排胜率，于是就百度找到了隐藏战绩查询的网页（非常好用~）
@@ -30,9 +34,13 @@ UPDATE 2023/8.21:
 
 ## 特别感谢
 
-[战绩助手 - 防丢失页面 (qq101.top)](http://qq101.top/)
 
-[fyne-io/fyne: Cross platform GUI toolkit in Go inspired by Material Design ](https://github.com/fyne-io/fyne)
 
-[JavaScript加密](https://www.jsjiami.com/)
+## 参考项目/教程：
+
+[real-web-world/hh-lol-prophet: lol 对局先知 上等马 牛马分析程序](https://github.com/real-web-world/hh-lol-prophet)
+
+[Zzaphkiel/Seraphine: 基于 LCU API 的英雄联盟战绩查询工具](https://github.com/Zzaphkiel/Seraphine)
+
+[上等马还是下等马，英雄联盟LCUAPI研究](https://cloud.tencent.com/developer/article/1987709)
 
