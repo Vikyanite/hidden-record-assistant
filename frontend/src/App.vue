@@ -1,21 +1,49 @@
 <script lang="ts" setup>
-import HelloWorld from './components/HelloWorld.vue'</script>
+
+import { useRouter, useRoute } from 'vue-router'
+import {onMounted, ref} from "vue";
+import routes from "./routes/router"
+import Loading from "./views/loading.vue";
+import Home from "./views/home.vue";
+
+const isWait = ref(false)
+
+function handleOpen(key:string, keyPath:string) {
+  console.log(key, keyPath);
+}
+
+function handleClose(key :string, keyPath :string) {
+  console.log(key, keyPath);
+}
+
+const router = useRouter()
+
+onMounted(() => {
+  router.push("/loading")
+})
+
+</script>
 
 <template>
-  <img id="logo" alt="Wails logo" src="./assets/images/logo-universal.png"/>
-  <HelloWorld/>
+    <router-view v-slot="{ Component }">
+      <transition name="el-fade-in-linear" appear>
+        <component :is="Component"/>
+      </transition>
+    </router-view>
+
+
+<!--  <home/>-->
+
 </template>
 
+
 <style>
-#logo {
-  display: block;
-  width: 50%;
-  height: 50%;
-  margin: auto;
-  padding: 10% 0 0;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: 100% 100%;
-  background-origin: content-box;
+
+.el-header, .el-footer {
+  background-color: #B3C0D1;
+  color: #333;
+  text-align: center;
+  line-height: 60px;
 }
+
 </style>
