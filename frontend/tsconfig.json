@@ -20,7 +20,8 @@
     "src/**/*.ts",
     "src/**/*.d.ts",
     "src/**/*.tsx",
-    "src/**/*.vue"
+    "src/**/*.vue",
+    "node_modules/vue/macros-global.d.ts"
   ],
   "references": [
     {
