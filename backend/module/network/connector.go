@@ -1,6 +1,7 @@
 package network
 
 import (
+	"crypto/tls"
 	"hidden-record-assistant/backend/module/cmdx"
 	"hidden-record-assistant/backend/module/errs"
 	"hidden-record-assistant/backend/module/zlog"
@@ -17,8 +18,15 @@ type HTTPConnector struct {
 var DefaultConnector = NewHTTPConnector()
 
 func NewHTTPConnector() (connector *HTTPConnector) {
+	// 因为默认的http.Client会验证证书，所以我们需要创建一个不验证证书的http.Client
+	// 否则会报错：x509: certificate signed by unknown authority
+	// 但是这样会导致安全问题，还是需要注意这个隐患
 	connector = &HTTPConnector{
-		Client: http.DefaultClient,
+		Client: &http.Client{
+			Transport: &http.Transport{
+				TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+			},
+		},
 	}
 	return
 }
@@ -50,6 +58,12 @@ func flagsToMap(res []byte) map[string]string {
 }
 
 func (c *HTTPConnector) Init() (err error) {
+	defer func() {
+		if err != nil {
+			zlog.Errorf("network.Client init failed: %s", err.Error())
+		}
+	}()
+
 	res, err := cmdx.Exec("wmic PROCESS WHERE name='LeagueClientUx.exe' GET commandline")
 	if err != nil {
 		err = errs.InternalError(err)
@@ -66,9 +80,8 @@ func (c *HTTPConnector) Init() (err error) {
 		}
 		return
 	}
-	Token, Port := flagMap["remoting-auth-token"], flagMap["riotclient-app-port"]
+	Token, Port := flagMap["remoting-auth-token"], flagMap["app-port"]
 	c.Prefix = "https://riot:" + Token + "@127.0.0.1:" + Port
-
 	zlog.Debugf("network.Client init success, your prefixURL is: %s", c.Prefix)
 	return
 }
