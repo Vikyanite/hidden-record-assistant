@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"regexp"
 	"strings"
+	"sync/atomic"
 	"time"
 )
 
@@ -93,6 +94,13 @@ func (c *HTTPConnector) Init(pingCbfunc func()) (err error) {
 }
 
 func (c *HTTPConnector) Ping(cbs func()) {
+	if atomic.LoadUint32(&c.IsPing) == 1 {
+		return
+	}
+	atomic.StoreUint32(&c.IsPing, 1)
+	defer func() {
+		atomic.StoreUint32(&c.IsPing, 0)
+	}()
 	for {
 		time.Sleep(time.Second * 1)
 		zlog.Debugf("pinging...")
