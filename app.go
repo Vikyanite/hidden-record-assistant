@@ -24,3 +24,6 @@ func (a *App) startup(ctx context.Context) {
 func (a *App) InitConnector() error {
 	return network.InitDefaultConnector()
 }
+func (a *App) CurrentSummoner() (string, error) {
+	return network.Get("/lol-summoner/v1/current-summoner")
+}
