@@ -24,11 +24,6 @@ const routes = [
                 path: 'test1',
                 component: Test1
             },
-            {
-                name: 'test2',
-                path: 'test2',
-                component: Test2
-            }
         ],
     },
 

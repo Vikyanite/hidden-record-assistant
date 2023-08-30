@@ -1,16 +1,27 @@
 <script lang="ts" setup>
 
 import { useRouter, useRoute } from 'vue-router'
-import {onMounted, ref} from "vue";
+import {nextTick, onMounted, ref} from "vue";
 import routes from "./routes/router"
 import Loading from "./views/loading.vue";
 import Home from "./views/home.vue";
+import {EventsOn} from "../wailsjs/runtime";
 
 const router = useRouter()
 
 onMounted(() => {
+  nextTick(() => {
+    EventsOn("disconnected", (...data: any) => {
+      console.log("event: disconnected")
+      router.push("/loading")
+      console.log("to loading")
+    })
+  })
+
   router.push("/loading")
 })
+
+
 
 </script>
 

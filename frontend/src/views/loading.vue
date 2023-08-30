@@ -2,7 +2,8 @@
 
 import {onMounted, ref} from "vue";
 import {useRouter} from "vue-router";
-import {InitConnector} from "../../wailsjs/go/main/App";
+import {InitConnector} from "../../wailsjs/go/service/WailsApp";
+
 
 
 const router = useRouter()

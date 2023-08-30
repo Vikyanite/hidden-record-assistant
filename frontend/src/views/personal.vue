@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import {onMounted} from "vue";
-  import {CurrentSummoner} from "../../wailsjs/go/main/App";
+  import {CurrentSummoner} from "../../wailsjs/go/service/WailsApp";
 
   onMounted(() => {
     console.log("Personal Page Mounted");

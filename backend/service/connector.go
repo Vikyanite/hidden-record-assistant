@@ -1,21 +1,22 @@
-package network
+package service
 
 import (
 	"crypto/tls"
 	"hidden-record-assistant/backend/module/cmdx"
 	"hidden-record-assistant/backend/module/errs"
 	"hidden-record-assistant/backend/module/zlog"
+	"io"
 	"net/http"
 	"regexp"
 	"strings"
+	"time"
 )
 
 type HTTPConnector struct {
 	Client *http.Client
 	Prefix string
+	IsPing uint32
 }
-
-var DefaultConnector = NewHTTPConnector()
 
 func NewHTTPConnector() (connector *HTTPConnector) {
 	// 因为默认的http.Client会验证证书，所以我们需要创建一个不验证证书的http.Client
@@ -29,10 +30,6 @@ func NewHTTPConnector() (connector *HTTPConnector) {
 		},
 	}
 	return
-}
-
-func InitDefaultConnector() error {
-	return DefaultConnector.Init()
 }
 
 func flagsToMap(res []byte) map[string]string {
@@ -57,10 +54,15 @@ func flagsToMap(res []byte) map[string]string {
 	return configMap
 }
 
-func (c *HTTPConnector) Init() (err error) {
+func (c *HTTPConnector) Init(pingCbfunc func()) (err error) {
 	defer func() {
+		if recover() != nil {
+			zlog.Errorf("ping panic!")
+			return
+		}
 		if err != nil {
 			zlog.Errorf("network.Client init failed: %s", err.Error())
+			return
 		}
 	}()
 
@@ -80,12 +82,48 @@ func (c *HTTPConnector) Init() (err error) {
 		}
 		return
 	}
+
 	Token, Port := flagMap["remoting-auth-token"], flagMap["app-port"]
 	c.Prefix = "https://riot:" + Token + "@127.0.0.1:" + Port
+
 	zlog.Debugf("network.Client init success, your prefixURL is: %s", c.Prefix)
+
+	go c.Ping(pingCbfunc)
 	return
 }
 
-func (c *HTTPConnector) Get(url string) (*http.Response, error) {
+func (c *HTTPConnector) Ping(cbs func()) {
+	for {
+		time.Sleep(time.Second * 1)
+		zlog.Debugf("pinging...")
+		_, err := cmdx.Exec("tasklist|findstr LeagueClientUx.exe")
+		if err != nil {
+			zlog.Error("LeagueClientUx.exe not found")
+			cbs()
+			return
+		}
+	}
+}
+
+func (c *HTTPConnector) getResponse(url string) (*http.Response, error) {
 	return c.Client.Get(c.Prefix + url)
+}
+
+func (c *HTTPConnector) Get(url string) (data string, err error) {
+	defer func() {
+		if err != nil {
+			zlog.Errorf("Get %s: %s", url, err.Error())
+			return
+		}
+	}()
+	resp, err := c.getResponse(url)
+	if err != nil {
+		return
+	}
+	binData, err := io.ReadAll(resp.Body)
+
+	data = string(binData)
+
+	zlog.Debugf("Get %s: %s", url, data)
+	return
 }
