@@ -18,7 +18,7 @@ onMounted(() => {
     })
   })
 
-  router.push("/loading")
+  router.push("/home")
 })
 
 
@@ -38,6 +38,14 @@ onMounted(() => {
 </template>
 
 
-<style>
+<style >
+
+#app {
+  --el-menu-base-level-padding: 5px;
+  --el-menu-icon-width: 25px;
+  --el-menu-item-height: 30px;
+
+  --el-menu-item-margin: 5px;
+}
 
 </style>

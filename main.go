@@ -17,17 +17,23 @@ func main() {
 
 	// Create application with options
 	err := wails.Run(&options.App{
-		Title:  "hidden-record-assistant",
-		Width:  1024,
-		Height: 768,
+		Title:         "hidden-record-assistant",
+		Width:         1024,
+		Height:        768,
+		DisableResize: true,
 		AssetServer: &assetserver.Options{
 			Assets: assets,
 		},
+
 		BackgroundColour: &options.RGBA{R: 255, G: 255, B: 255, A: 100},
 		OnStartup:        app.Startup,
 		Bind: []interface{}{
 			app,
 		},
+		//Windows: &windows.Options{
+		//	WebviewIsTransparent: true,
+		//	WindowIsTranslucent:  true,
+		//},
 	})
 
 	if err != nil {
