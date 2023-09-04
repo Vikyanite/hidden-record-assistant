@@ -15,13 +15,20 @@
     "@fortawesome/free-regular-svg-icons": "^6.4.2",
     "@fortawesome/free-solid-svg-icons": "^6.4.2",
     "@fortawesome/vue-fontawesome": "^3.0.3",
+    "@types/axios": "^0.14.0",
+    "axios": "^1.5.0",
+    "chart.js": "^4.4.0",
     "element-plus": "^2.3.10",
+    "sass": "^1.66.1",
     "vue": "^3.2.37",
+    "vue-chartkick": "^1.1.0",
     "vue-fontawesome": "^0.0.2",
-    "vue-router": "^4.2.4"
+    "vue-router": "^4.2.4",
+    "vue3-popper": "^1.5.0"
   },
   "devDependencies": {
     "@babel/types": "^7.18.10",
+    "@types/vue-chartkick": "^0.5.1",
     "@vitejs/plugin-vue": "^3.0.3",
     "typescript": "^4.6.4",
     "vite": "^3.0.7",

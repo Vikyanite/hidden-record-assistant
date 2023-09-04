@@ -22,7 +22,8 @@ func main() {
 		Height:        768,
 		DisableResize: true,
 		AssetServer: &assetserver.Options{
-			Assets: assets,
+			Assets:  assets,
+			Handler: service.NewFileLoader(),
 		},
 
 		BackgroundColour: &options.RGBA{R: 255, G: 255, B: 255, A: 100},

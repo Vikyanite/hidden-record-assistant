@@ -32,7 +32,7 @@ onMounted(()=> {
             <el-icon><User /></el-icon>
             <span class="menu-item-text">个人信息</span>
           </el-menu-item>
-          <el-menu-item index="/home/test1">
+          <el-menu-item index="/home/match">
             <el-icon><Search /></el-icon>
             <span class="menu-item-text">搜索召唤师</span>
           </el-menu-item>
