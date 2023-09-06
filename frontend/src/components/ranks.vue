@@ -4,11 +4,11 @@
       <div class="ranks_rank" v-if="rank_solo.division!='NA'">
         <div class="ranks_rank_img">
           <img
-            :src="'../assets/images/tier/' + rank_solo.tier + '.png'"
+            :src="store.getters.LocalAssetPrefix() + '/assets/images/tier/' + rank_solo.tier + '.png'"
             alt=""
           />
           <img
-              :src="'../assets/images/tier/' + rank_solo.tier + '.png'"
+              :src="store.getters.LocalAssetPrefix() + '/assets/images/tier/' + rank_solo.tier + '.png'"
               alt=""
           />
         </div>
@@ -39,7 +39,7 @@
       <div v-else>
         <div class="ranks_rank">
           <div class="ranks_rank_img">
-            <img src="../assets/images/tier/unranked.png" alt="unranked"/>
+            <img :src="store.getters.LocalAssetPrefix() + '/assets/images/tier/unranked.png'" alt="unranked"/>
           </div>
           <div class="ranks_rank_text">
             <h3 class="ranks_rank_title">Ranked SOLO/DUO</h3>
@@ -51,7 +51,7 @@
       <div class="ranks_rank" v-if="rank_flex.division!='NA'">
         <div class="ranks_rank_img">
           <img
-            :src="'@/assets/images/' + rank_flex.tier + '.png'"
+            :src="store.getters.LocalAssetPrefix() + '/assets/images/tier/' + rank_flex.tier + '.png'"
             alt=""
           />
         </div>
@@ -82,7 +82,7 @@
       <div v-else>
         <div class="ranks_rank">
           <div class="ranks_rank_img">
-            <img src="../assets/images/tier/unranked.png" alt="unranked"/>
+            <img :src="store.getters.LocalAssetPrefix() + '/assets/images/tier/unranked.png'" alt="unranked"/>
           </div>
           <div class="ranks_rank_text">
             <h3 class="ranks_rank_title">Ranked FLEX</h3>
@@ -97,8 +97,8 @@
 <script setup lang="ts">
 
   import {IRankDetails} from "../types/types";
-  import HraImg from "./hra-img.vue";
-
+  import {useStore} from "vuex";
+  const store = useStore()
   defineProps ({
     rank_solo: {
       // 使用接口定义 rank_solo 的属性类型

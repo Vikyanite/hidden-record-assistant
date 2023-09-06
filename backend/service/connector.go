@@ -2,12 +2,15 @@ package service
 
 import (
 	"crypto/tls"
+	"encoding/json"
+	"hidden-record-assistant/backend/model"
 	"hidden-record-assistant/backend/module/cmdx"
 	"hidden-record-assistant/backend/module/errs"
 	"hidden-record-assistant/backend/module/zlog"
 	"io"
 	"net/http"
 	"regexp"
+	"strconv"
 	"strings"
 	"sync/atomic"
 	"time"
@@ -55,7 +58,7 @@ func flagsToMap(res []byte) map[string]string {
 	return configMap
 }
 
-func (c *HTTPConnector) Init(pingCbfunc func()) (err error) {
+func (c *HTTPConnector) Init(pingCbfunc func()) (data model.InitBackendData, err error) {
 	defer func() {
 		if recover() != nil {
 			zlog.Errorf("ping panic!")
@@ -87,9 +90,78 @@ func (c *HTTPConnector) Init(pingCbfunc func()) (err error) {
 	Token, Port := flagMap["remoting-auth-token"], flagMap["app-port"]
 	c.Prefix = "https://riot:" + Token + "@127.0.0.1:" + Port
 
+	data = model.InitBackendData{
+		Auth: model.Auth{
+			Token: Token,
+			Port:  Port,
+		},
+		LOLJson: model.LOLJson{
+			ChampionJson: map[int]interface{}{},
+			QueueJson:    map[int]interface{}{},
+			PerkJson:     map[int]interface{}{},
+			ItemJson:     map[int]interface{}{},
+			SpellJson:    map[int]interface{}{},
+		},
+	}
+
 	zlog.Debugf("network.Client init success, your prefixURL is: %s", c.Prefix)
 
+	waitChan := c.getLOLJson(&data.LOLJson)
+	for i := 0; i < 5; i++ {
+		waitChan <- struct{}{}
+	}
 	go c.Ping(pingCbfunc)
+
+	return
+}
+
+func (c *HTTPConnector) getLOLJson(LOLJson *model.LOLJson) (getJsonChan chan struct{}) {
+	getJsonChan = make(chan struct{}, 5)
+
+	op := func(url string, data *map[int]interface{}) {
+		binData, _ := c.Get(url)
+		*data = map[int]interface{}{}
+
+		dataArray := []map[string]interface{}{}
+
+		_ = json.Unmarshal([]byte(binData), &dataArray)
+
+		for i := range dataArray {
+			id := int(dataArray[i]["id"].(float64))
+			(*data)[id] = dataArray[i]
+		}
+		getJsonChan <- struct{}{}
+	}
+
+	go op("/lol-game-data/assets/v1/champion-summary.json", &LOLJson.ChampionJson)
+
+	go func() {
+		data := &LOLJson.QueueJson
+		binData, _ := c.Get("/lol-game-data/assets/v1/queues.json")
+		*data = map[int]interface{}{}
+
+		queueMap := map[string]interface{}{}
+
+		_ = json.Unmarshal([]byte(binData), &queueMap)
+
+		for k := range queueMap {
+			id, _ := strconv.Atoi(k)
+			queueMap[k].(map[string]interface{})["id"] = id
+			(*data)[id] = queueMap[k]
+		}
+		getJsonChan <- struct{}{}
+	}()
+
+	go op("/lol-game-data/assets/v1/perks.json", &LOLJson.PerkJson)
+
+	go op("/lol-game-data/assets/v1/items.json", &LOLJson.ItemJson)
+
+	go op("/lol-game-data/assets/v1/summoner-spells.json", &LOLJson.SpellJson)
+
+	for i := 0; i < 5; i++ {
+		<-getJsonChan
+	}
+
 	return
 }
 
@@ -103,7 +175,6 @@ func (c *HTTPConnector) Ping(cbs func()) {
 	}()
 	for {
 		time.Sleep(time.Second * 1)
-		zlog.Debugf("pinging...")
 		_, err := cmdx.Exec("tasklist|findstr LeagueClientUx.exe")
 		if err != nil {
 			zlog.Error("LeagueClientUx.exe not found")
@@ -117,7 +188,7 @@ func (c *HTTPConnector) getResponse(url string) (*http.Response, error) {
 	return c.Client.Get(c.Prefix + url)
 }
 
-func (c *HTTPConnector) Get(url string) (data string, err error) {
+func (c *HTTPConnector) Get(url string) (data []byte, err error) {
 	defer func() {
 		if err != nil {
 			zlog.Errorf("Get %s: %s", url, err.Error())
@@ -128,10 +199,9 @@ func (c *HTTPConnector) Get(url string) (data string, err error) {
 	if err != nil {
 		return
 	}
-	binData, err := io.ReadAll(resp.Body)
-
-	data = string(binData)
-
-	zlog.Debugf("Get %s: %s", url, data)
+	data, err = io.ReadAll(resp.Body)
+	//if err == nil {
+	//	zlog.Debugf("Get [%s] succeed!", url)
+	//}
 	return
 }

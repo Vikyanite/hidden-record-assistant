@@ -7,23 +7,33 @@
 
     <div class="recent_summary" style="padding:.5rem">
       <div class="recent_summary_total">
-        <p>{{matches.wins}}W {{matches.defeats}}L ({{(matches.wins*100/(matches.wins + matches.defeats)).toFixed(0)}}%)</p>
-        <pie-chart :data="[['Wins', matches.wins], ['Defeats', matches.defeats]]" :colors="['rgb(32,178,170)', 'rgb(240, 128, 128)']" width="100px" height="100px" :donut="true" :legend="false"></pie-chart>
+        <p>{{ statistic.wins }}W {{ statistic.defeats }}L
+          ({{ (statistic.wins * 100 / (statistic.wins + statistic.defeats)).toFixed(0) }}%)</p>
+        <pie-chart :data="[['Wins', statistic.wins], ['Defeats', statistic.defeats]]" :colors="['rgb(32,178,170)', 'rgb(240, 128, 128)']" width="100px" height="100px" :donut="true" :legend="false"></pie-chart>
         <div>
-          <p>{{(matches.kills / (matches.wins + matches.defeats)).toFixed(1)}} / {{(matches.deaths / (matches.wins + matches.defeats)).toFixed(1)}} / {{(matches.assists / (matches.wins + matches.defeats)).toFixed(1)}}</p>
-          <p>{{((matches.kills + matches.assists) / matches.deaths).toFixed(2)}} KDA</p>
+          <p>{{ (statistic.kills / (statistic.wins + statistic.defeats)).toFixed(1) }} /
+            {{ (statistic.deaths / (statistic.wins + statistic.defeats)).toFixed(1) }} /
+            {{ (statistic.assists / (statistic.wins + statistic.defeats)).toFixed(1) }}</p>
+          <p>{{ ((statistic.kills + statistic.assists) / statistic.deaths).toFixed(2) }} KDA</p>
         </div>
       </div>
 
       <div class="recent_summary_lane">
         <p>Preferred Position:</p>
         <div class="recent_summary_lane_name">
-          <img :src="'../assets/images/lane/' + matches.preferablyLane + '.png'" class="lane-icon" alt="lane">
-          <p v-if="matches.preferablyLane == 'utility'">Support ({{(matches.preferablyLaneGames * 100 / (matches.wins + matches.defeats)).toFixed(0)}}%)</p>
-          <p v-else>{{matches.preferablyLane}} ({{(matches.preferablyLaneGames * 100 / (matches.wins + matches.defeats)).toFixed(0)}}%)</p>
+          <img :src="store.getters.LocalAssetPrefix() + '/assets/images/lane/' + statistic.preferablyLane + '.png'" class="lane-icon" alt="lane">
+          <p v-if="statistic.preferablyLane == 'utility'">Support
+            ({{ (statistic.preferablyLaneGames * 100 / (statistic.wins + statistic.defeats)).toFixed(0) }}%)</p>
+          <p v-else>{{ statistic.preferablyLane }}
+            ({{ (statistic.preferablyLaneGames * 100 / (statistic.wins + statistic.defeats)).toFixed(0) }}%)</p>
         </div>
-        <p>{{matches.wins_preferablyLane}}W {{matches.defeats_preferablyLane}}L ({{(matches.wins_preferablyLane * 100 / (matches.preferablyLaneGames)).toFixed(1)}}%)</p>
-        <p>{{(matches.kills_preferablyLane / matches.preferablyLaneGames).toFixed(1)}} / {{(matches.deaths_preferablyLane / matches.preferablyLaneGames).toFixed(1)}} / {{(matches.assists_preferablyLane / matches.preferablyLaneGames).toFixed(1)}}  ({{((matches.kills_preferablyLane + matches.assists_preferablyLane)/matches.deaths_preferablyLane).toFixed(2)}} KDA)</p>
+        <p>{{ statistic.wins_preferablyLane }}W {{ statistic.defeats_preferablyLane }}L
+          ({{ (statistic.wins_preferablyLane * 100 / (statistic.preferablyLaneGames)).toFixed(1) }}%)</p>
+        <p>{{ (statistic.kills_preferablyLane / statistic.preferablyLaneGames).toFixed(1) }} /
+          {{ (statistic.deaths_preferablyLane / statistic.preferablyLaneGames).toFixed(1) }} /
+          {{ (statistic.assists_preferablyLane / statistic.preferablyLaneGames).toFixed(1) }}
+          ({{ ((statistic.kills_preferablyLane + statistic.assists_preferablyLane) / statistic.deaths_preferablyLane).toFixed(2) }}
+          KDA)</p>
       </div>
 
       <div class="recent_summary_champs">
@@ -32,28 +42,42 @@
           <img
           :src="
             'https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-icons/' +
-            matches.preferablyChamp1 +
+            statistic.preferablyChamp1 +
             '.png'
           "
           alt="champ img"
           />
           <div>
-            <p>{{matches.wins_preferablyChamps[0]}}W {{matches.defeats_preferablyChamps[0]}}L ({{(matches.wins_preferablyChamps[0] * 100 / (matches.wins_preferablyChamps[0] + matches.defeats_preferablyChamps[0])).toFixed(1)}}%)</p>
-            <p>{{(matches.kills_preferablyChamps[0] / (matches.wins_preferablyChamps[0] + matches.defeats_preferablyChamps[0])).toFixed(1)}} / {{(matches.deaths_preferablyChamps[0] / (matches.wins_preferablyChamps[0] + matches.defeats_preferablyChamps[0])).toFixed(1)}} / {{(matches.assists_preferablyChamps[0] / (matches.wins_preferablyChamps[0] + matches.defeats_preferablyChamps[0])).toFixed(1)}} ({{((matches.kills_preferablyChamps[0] + matches.assists_preferablyChamps[0]) / matches.deaths_preferablyChamps[0]).toFixed(2)}} KDA)</p>
+            <p>{{ statistic.wins_preferablyChamps[0] }}W {{ statistic.defeats_preferablyChamps[0] }}L
+              ({{ (statistic.wins_preferablyChamps[0] * 100 / (statistic.wins_preferablyChamps[0] + statistic.defeats_preferablyChamps[0])).toFixed(1) }}%)</p>
+            <p>{{ (statistic.kills_preferablyChamps[0] / (statistic.wins_preferablyChamps[0] + statistic.defeats_preferablyChamps[0])).toFixed(1) }}
+              /
+              {{ (statistic.deaths_preferablyChamps[0] / (statistic.wins_preferablyChamps[0] + statistic.defeats_preferablyChamps[0])).toFixed(1) }}
+              /
+              {{ (statistic.assists_preferablyChamps[0] / (statistic.wins_preferablyChamps[0] + statistic.defeats_preferablyChamps[0])).toFixed(1) }}
+              ({{ ((statistic.kills_preferablyChamps[0] + statistic.assists_preferablyChamps[0]) / statistic.deaths_preferablyChamps[0]).toFixed(2) }}
+              KDA)</p>
           </div>
         </div>
         <div class="recent_summary_champs_2">
           <img
           :src="
             'https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-icons/' +
-            matches.preferablyChamp2 +
+            statistic.preferablyChamp2 +
             '.png'
           "
           alt="champ img"
           />  
           <div>
-            <p>{{matches.wins_preferablyChamps[1]}}W {{matches.defeats_preferablyChamps[1]}}L ({{(matches.wins_preferablyChamps[1] * 100 / (matches.wins_preferablyChamps[1] + matches.defeats_preferablyChamps[1])).toFixed(1)}}%)</p>
-            <p>{{(matches.kills_preferablyChamps[1] / (matches.wins_preferablyChamps[1] + matches.defeats_preferablyChamps[1])).toFixed(1)}} / {{(matches.deaths_preferablyChamps[1] / (matches.wins_preferablyChamps[1] + matches.defeats_preferablyChamps[1])).toFixed(1)}} / {{(matches.assists_preferablyChamps[1] / (matches.wins_preferablyChamps[1] + matches.defeats_preferablyChamps[1])).toFixed(1)}} ({{((matches.kills_preferablyChamps[1] + matches.assists_preferablyChamps[1]) / matches.deaths_preferablyChamps[1]).toFixed(2)}} KDA)</p>
+            <p>{{ statistic.wins_preferablyChamps[1] }}W {{ statistic.defeats_preferablyChamps[1] }}L
+              ({{ (statistic.wins_preferablyChamps[1] * 100 / (statistic.wins_preferablyChamps[1] + statistic.defeats_preferablyChamps[1])).toFixed(1) }}%)</p>
+            <p>{{ (statistic.kills_preferablyChamps[1] / (statistic.wins_preferablyChamps[1] + statistic.defeats_preferablyChamps[1])).toFixed(1) }}
+              /
+              {{ (statistic.deaths_preferablyChamps[1] / (statistic.wins_preferablyChamps[1] + statistic.defeats_preferablyChamps[1])).toFixed(1) }}
+              /
+              {{ (statistic.assists_preferablyChamps[1] / (statistic.wins_preferablyChamps[1] + statistic.defeats_preferablyChamps[1])).toFixed(1) }}
+              ({{ ((statistic.kills_preferablyChamps[1] + statistic.assists_preferablyChamps[1]) / statistic.deaths_preferablyChamps[1]).toFixed(2) }}
+              KDA)</p>
           </div>       
         </div>
       </div>
@@ -66,23 +90,23 @@
 
     <div class="recent_overview">
       <div>
-        <h3 class="name_yellow">{{(matches.firstBloodTimes * 100 / (matches.wins + matches.defeats)).toFixed(1)}}%</h3>
+        <h3 class="name_yellow">{{ (statistic.firstBloodTimes * 100 / (statistic.wins + statistic.defeats)).toFixed(1) }}%</h3>
         <p>First Blood %</p>
       </div>
       <div>
-        <h3 class="name_yellow">{{(matches.gold / (matches.wins + matches.defeats)).toFixed(2)}}</h3>
+        <h3 class="name_yellow">{{ (statistic.gold / (statistic.wins + statistic.defeats)).toFixed(2) }}</h3>
         <p>Gold / min</p>
       </div>
       <div>
-        <h3 class="name_yellow">{{(matches.cs / (matches.wins + matches.defeats)).toFixed(2)}}</h3>
+        <h3 class="name_yellow">{{ (statistic.cs / (statistic.wins + statistic.defeats)).toFixed(2) }}</h3>
         <p>CS / min</p>
       </div>
       <div>
-        <h3 class="name_yellow">{{(matches.control_wards / (matches.wins + matches.defeats)).toFixed(2)}}</h3>
+        <h3 class="name_yellow">{{ (statistic.control_wards / (statistic.wins + statistic.defeats)).toFixed(2) }}</h3>
         <p>Control wards / game</p>
       </div>
       <div>
-        <h3 class="name_yellow">{{(matches.vision_score / (matches.wins + matches.defeats)).toFixed(2)}}</h3>
+        <h3 class="name_yellow">{{ (statistic.vision_score / (statistic.wins + statistic.defeats)).toFixed(2) }}</h3>
         <p>Vision score / game</p>
       </div>
 
@@ -93,58 +117,21 @@
 
 <script lang="ts" setup>
 import {onMounted, reactive, ref} from "vue";
-import {IMatchData} from "../types/match";
+import {IMatchStatistic, IMatchData} from "../types/match";
+import {useStore} from "vuex";
 
+const props = defineProps({
+  allMatches: Object as () => IMatchData[],
+  puuid: String,
+})
 
-  const props = defineProps({
-    allMatches: {
-      type: Object as () => IMatchData[],
-    }, //toate meciurile pt a le face analiza
-    puuid: String,
-  })
+onMounted(()=>{
+  getData();
+})
 
-  onMounted(()=>{
-    getData();
-  })
+const store = useStore()
 
-interface displayMatches{
-  mainPlayerPoz: number[]; // array with all positions of main player in all matches
-  kills: number;
-  assists: number;
-  deaths: number;
-  wins: number;
-  defeats: number;
-
-  gold: number;
-  vision_score: number;
-  firstBloodTimes: number;
-  cs: number;
-  control_wards: number;
-
-  role: string[]; // vector cu toate lane-urile
-  preferablyLane: string | null; // cel mai jucat lane
-  preferablyLaneGames: number; // nr meciurilor jucate pe cel mai jucat lane
-  champs: number[]; // vector cu toți campionii
-  preferablyChamp1: number | null; // cel mai jucat campion
-  preferablyChamp2: number | null; // al doilea cel mai jucat campion
-
-  preferablyChamp1_games: number;
-  preferablyChamp2_games: number;
-
-  kills_preferablyLane: number; // statistici pe cel mai jucat lane
-  deaths_preferablyLane: number;
-  assists_preferablyLane: number;
-  wins_preferablyLane: number;
-  defeats_preferablyLane: number;
-
-  kills_preferablyChamps: [number, number]; // statistici pentru cei mai jucati campioni [0: cel mai jucat champ, 1: al 2-lea cel mai jucat campion]
-  deaths_preferablyChamps: [number, number];
-  assists_preferablyChamps: [number, number];
-  wins_preferablyChamps: [number, number];
-  defeats_preferablyChamps: [number, number];
-}
-
-const matches:displayMatches = reactive({
+const statistic:IMatchStatistic = reactive({
   mainPlayerPoz:[], //array with all postion of main player in all matches
   kills:0,
   assists:0,
@@ -158,7 +145,7 @@ const matches:displayMatches = reactive({
   cs:0,
   control_wards:0,
 
-  role:[], //vector cu toate lane uri
+  lane:[], //vector cu toate lane uri
   preferablyLane:null, //cel mai jucat lane
   preferablyLaneGames: 0, // nr meciurilor jucate pe cel mai jucat lane
   champs:[], //vector cu toti campionii
@@ -181,7 +168,7 @@ const matches:displayMatches = reactive({
   defeats_preferablyChamps:[0,0],
 });
 
-    function getData(){
+function getData(){
       let allMatches = props.allMatches || [];
       let puuid = props.puuid;
       
@@ -189,7 +176,7 @@ const matches:displayMatches = reactive({
       for(let i = 0; i<allMatches.length; i++){
         for(let j = 0; j < allMatches[i].participantIdentities.length; j++){
           if(puuid == allMatches[i].participantIdentities[j].player.puuid){
-            matches.mainPlayerPoz.push(j);
+            statistic.mainPlayerPoz.push(j);
           }
         }
       }
@@ -197,36 +184,36 @@ const matches:displayMatches = reactive({
       //get all kills, asssists and deaths
 
       for(let i = 0; i < allMatches.length; i++){
-        matches.kills += allMatches[i].participants[matches.mainPlayerPoz[i]].stats.kills;
-        matches.deaths += allMatches[i].participants[matches.mainPlayerPoz[i]].stats.deaths;
-        matches.assists += allMatches[i].participants[matches.mainPlayerPoz[i]].stats.assists;
+        statistic.kills += allMatches[i].participants[statistic.mainPlayerPoz[i]].stats.kills;
+        statistic.deaths += allMatches[i].participants[statistic.mainPlayerPoz[i]].stats.deaths;
+        statistic.assists += allMatches[i].participants[statistic.mainPlayerPoz[i]].stats.assists;
         //get wins, defeats
-        allMatches[i].participants[matches.mainPlayerPoz[i]].stats.win ? matches.wins++ : matches.defeats++;
+        allMatches[i].participants[statistic.mainPlayerPoz[i]].stats.win ? statistic.wins++ : statistic.defeats++;
 
         //get lanes
-        if(allMatches[i].participants[matches.mainPlayerPoz[i]].timeline.role){
-          matches.role.push(allMatches[i].participants[matches.mainPlayerPoz[i]].timeline.role);
+        if(allMatches[i].participants[statistic.mainPlayerPoz[i]].timeline.lane){
+          statistic.lane.push(allMatches[i].participants[statistic.mainPlayerPoz[i]].timeline.lane);
         }
 
         //get champs
-        matches.champs.push(allMatches[i].participants[matches.mainPlayerPoz[i]].championId);
+        statistic.champs.push(allMatches[i].participants[statistic.mainPlayerPoz[i]].championId);
 
         //get gold
-        matches.gold += allMatches[i].participants[matches.mainPlayerPoz[i]].stats.goldEarned / (allMatches[i].gameDuration/60);
+        statistic.gold += allMatches[i].participants[statistic.mainPlayerPoz[i]].stats.goldEarned / (allMatches[i].gameDuration/60);
 
         //get vision score
-        matches.vision_score += allMatches[i].participants[matches.mainPlayerPoz[i]].stats.visionScore;
+        statistic.vision_score += allMatches[i].participants[statistic.mainPlayerPoz[i]].stats.visionScore;
 
         //first blood kill or assists
-        if(allMatches[i].participants[matches.mainPlayerPoz[i]].stats.firstBloodAssist || allMatches[i].participants[matches.mainPlayerPoz[i]].stats.firstBloodKill){
-          matches.firstBloodTimes++;
+        if(allMatches[i].participants[statistic.mainPlayerPoz[i]].stats.firstBloodAssist || allMatches[i].participants[statistic.mainPlayerPoz[i]].stats.firstBloodKill){
+          statistic.firstBloodTimes++;
         }
 
         //get cs
-        matches.cs += (allMatches[i].participants[matches.mainPlayerPoz[i]].stats.neutralMinionsKilled + allMatches[i].participants[matches.mainPlayerPoz[i]].stats.totalMinionsKilled) / (allMatches[i].gameDuration/60);
+        statistic.cs += (allMatches[i].participants[statistic.mainPlayerPoz[i]].stats.neutralMinionsKilled + allMatches[i].participants[statistic.mainPlayerPoz[i]].stats.totalMinionsKilled) / (allMatches[i].gameDuration/60);
 
         //get control wards
-        matches.control_wards += allMatches[i].participants[matches.mainPlayerPoz[i]].stats.visionWardsBoughtInGame;
+        statistic.control_wards += allMatches[i].participants[statistic.mainPlayerPoz[i]].stats.visionWardsBoughtInGame;
 
       }
       // console.log(matches.lane);
@@ -235,103 +222,104 @@ const matches:displayMatches = reactive({
 
       //get most played lane
       let nrmax=-100;
-      for(let i = 0; i < matches.role.length; i++){
+      for(let i = 0; i < statistic.lane.length; i++){
         var nr = 0, lane;
-        for(let j = 0; j < matches.role.length; j++){
-          if(matches.role[j] == matches.role[i]){
+        for(let j = 0; j < statistic.lane.length; j++){
+          if(statistic.lane[j] == statistic.lane[i]){
             nr++;
           }
         }
         if(nr>nrmax){
           nrmax = nr;
-          matches.preferablyLane = matches.role[i].toLowerCase();
+          statistic.preferablyLane = statistic.lane[i].toLowerCase();
         }
         
       }
-      matches.preferablyLaneGames = nrmax;
+      statistic.preferablyLaneGames = nrmax;
 
 
       //get most 2 played champs
       let max1=-100, max2=-100;
-      for(let i = 0; i < matches.champs.length; i++){
+      for(let i = 0; i < statistic.champs.length; i++){
         let nr = 0;
-        for(let j = 0; j < matches.champs.length; j++){
-          if(matches.champs[j] == matches.champs[i]){
+        for(let j = 0; j < statistic.champs.length; j++){
+          if(statistic.champs[j] == statistic.champs[i]){
             nr++;
           }
         }
         if(nr > max1){
           max1 = nr;
-          matches.preferablyChamp1 = matches.champs[i];
+          statistic.preferablyChamp1 = statistic.champs[i];
         }
       }
 
-      for(let i = 0; i < matches.champs.length; i++){ 
-        if(matches.champs[i] == matches.preferablyChamp1){
-          matches.champs.splice(i, 1);
+      for(let i = 0; i < statistic.champs.length; i++){
+        if(statistic.champs[i] == statistic.preferablyChamp1){
+          statistic.champs.splice(i, 1);
         }
       }
 
       // console.log(matches.champs);
 
-      for(let i = 0; i < matches.champs.length; i++){
+      for(let i = 0; i < statistic.champs.length; i++){
         let nr = 0;
-        for(let j = 0; j < matches.champs.length; j++){
-          if(matches.champs[j] == matches.champs[i]){
+        for(let j = 0; j < statistic.champs.length; j++){
+          if(statistic.champs[j] == statistic.champs[i]){
             nr++;
           }
         }
         if(nr > max2){
           max2 = nr;
-          matches.preferablyChamp2 = matches.champs[i];
+          statistic.preferablyChamp2 = statistic.champs[i];
         }
       }
 
-      matches.preferablyChamp1_games = max1;
-      matches.preferablyChamp2_games = max2;
+      statistic.preferablyChamp1_games = max1;
+      statistic.preferablyChamp2_games = max2;
 
 
-      console.log(max1, matches.preferablyChamp1);
-      console.log(max2, matches.preferablyChamp2);
+      console.log(max1, statistic.preferablyChamp1);
+      console.log(max2, statistic.preferablyChamp2);
 
       //get stats for most played lane and most played champs games
       for(let i = 0; i < allMatches.length; i++){
-        if(allMatches[i].participants[matches.mainPlayerPoz[i]].timeline.role == matches.preferablyLane?.toUpperCase()){
-          matches.kills_preferablyLane += allMatches[i].participants[matches.mainPlayerPoz[i]].stats.kills;
-          matches.deaths_preferablyLane += allMatches[i].participants[matches.mainPlayerPoz[i]].stats.deaths;
-          matches.assists_preferablyLane += allMatches[i].participants[matches.mainPlayerPoz[i]].stats.assists;
-          if(allMatches[i].participants[matches.mainPlayerPoz[i]].stats.win){
-            matches.wins_preferablyLane++;
+        if(allMatches[i].participants[statistic.mainPlayerPoz[i]].timeline.lane == statistic.preferablyLane?.toUpperCase()){
+          statistic.kills_preferablyLane += allMatches[i].participants[statistic.mainPlayerPoz[i]].stats.kills;
+          statistic.deaths_preferablyLane += allMatches[i].participants[statistic.mainPlayerPoz[i]].stats.deaths;
+          statistic.assists_preferablyLane += allMatches[i].participants[statistic.mainPlayerPoz[i]].stats.assists;
+          if(allMatches[i].participants[statistic.mainPlayerPoz[i]].stats.win){
+            statistic.wins_preferablyLane++;
           } else {
-            matches.defeats_preferablyLane++;
+            statistic.defeats_preferablyLane++;
           }
         }
-        if(allMatches[i].participants[matches.mainPlayerPoz[i]].championId == matches.preferablyChamp1){
-          matches.kills_preferablyChamps[0] += allMatches[i].participants[matches.mainPlayerPoz[i]].stats.kills;
-          matches.deaths_preferablyChamps[0] += allMatches[i].participants[matches.mainPlayerPoz[i]].stats.deaths;
-          matches.assists_preferablyChamps[0] += allMatches[i].participants[matches.mainPlayerPoz[i]].stats.assists;
+        if(allMatches[i].participants[statistic.mainPlayerPoz[i]].championId == statistic.preferablyChamp1){
+          statistic.kills_preferablyChamps[0] += allMatches[i].participants[statistic.mainPlayerPoz[i]].stats.kills;
+          statistic.deaths_preferablyChamps[0] += allMatches[i].participants[statistic.mainPlayerPoz[i]].stats.deaths;
+          statistic.assists_preferablyChamps[0] += allMatches[i].participants[statistic.mainPlayerPoz[i]].stats.assists;
 
-          if(allMatches[i].participants[matches.mainPlayerPoz[i]].stats.win){
-            matches.wins_preferablyChamps[0]++;
+          if(allMatches[i].participants[statistic.mainPlayerPoz[i]].stats.win){
+            statistic.wins_preferablyChamps[0]++;
           } else {
-            matches.defeats_preferablyChamps[0]++;
+            statistic.defeats_preferablyChamps[0]++;
           }
         }
 
-        if(allMatches[i].participants[matches.mainPlayerPoz[i]].championId == matches.preferablyChamp2){
-          matches.kills_preferablyChamps[1] += allMatches[i].participants[matches.mainPlayerPoz[i]].stats.kills;
-          matches.deaths_preferablyChamps[1] += allMatches[i].participants[matches.mainPlayerPoz[i]].stats.deaths;
-          matches.assists_preferablyChamps[1] += allMatches[i].participants[matches.mainPlayerPoz[i]].stats.assists;
+        if(allMatches[i].participants[statistic.mainPlayerPoz[i]].championId == statistic.preferablyChamp2){
+          statistic.kills_preferablyChamps[1] += allMatches[i].participants[statistic.mainPlayerPoz[i]].stats.kills;
+          statistic.deaths_preferablyChamps[1] += allMatches[i].participants[statistic.mainPlayerPoz[i]].stats.deaths;
+          statistic.assists_preferablyChamps[1] += allMatches[i].participants[statistic.mainPlayerPoz[i]].stats.assists;
 
-          if(allMatches[i].participants[matches.mainPlayerPoz[i]].stats.win){
-            matches.wins_preferablyChamps[1]++;
+          if(allMatches[i].participants[statistic.mainPlayerPoz[i]].stats.win){
+            statistic.wins_preferablyChamps[1]++;
           } else {
-            matches.defeats_preferablyChamps[1]++;
+            statistic.defeats_preferablyChamps[1]++;
           }
         }
       }
 
     }
+
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

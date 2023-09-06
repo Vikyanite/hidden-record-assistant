@@ -2,11 +2,7 @@
   <div class="profile" v-if="data">
     <div class="profile_img">
       <img
-        :src="
-          'http://ddragon.leagueoflegends.com/cdn/11.22.1/img/profileicon/' +
-          data.profileIconId +
-          '.png'
-        "
+        :src="store.getters.LCUAPIPrefix() + '/lol-game-data/assets/v1/profile-icons/' + data.profileIconId + '.jpg'"
         alt="profile icon"
       />
     </div>
@@ -43,12 +39,14 @@
 <script lang="ts" setup>
 
   import {ISummoner} from "../types/types";
-
+  import {useStore} from "vuex";
+  const store = useStore()
   defineProps({
     data: {
       type: Object as () => ISummoner,
     },
   })
+
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

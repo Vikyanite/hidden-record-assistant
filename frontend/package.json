@@ -24,7 +24,8 @@
     "vue-chartkick": "^1.1.0",
     "vue-fontawesome": "^0.0.2",
     "vue-router": "^4.2.4",
-    "vue3-popper": "^1.5.0"
+    "vue3-popper": "^1.5.0",
+    "vuex": "^4.1.0"
   },
   "devDependencies": {
     "@babel/types": "^7.18.10",

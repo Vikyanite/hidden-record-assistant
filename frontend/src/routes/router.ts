@@ -4,7 +4,7 @@ import Personal from "../views/personal.vue";
 import Test1 from "../views/test1.vue";
 import Test2 from "../views/test2.vue";
 import Loading from "../views/loading.vue";
-import Match from "../views/Match.vue";
+import search from "../views/search.vue";
 
 const routes = [
     {
@@ -21,9 +21,9 @@ const routes = [
                 component: Personal
             },
             {
-                name: 'match',
-                path: 'match',
-                component: Match,
+                name: 'search',
+                path: 'search',
+                component: search,
             },
         ],
     },

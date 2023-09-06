@@ -24,5 +24,8 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
     app.component(key, component)
 }
 
+// ==================== vuex ====================
+import store from './store/index'
+app.use(store)
 
 app.mount('#app')

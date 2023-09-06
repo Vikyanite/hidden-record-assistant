@@ -3,8 +3,7 @@
 import {onMounted, ref} from "vue";
 import {useRouter} from "vue-router";
 import {InitConnector} from "../../wailsjs/go/service/WailsApp";
-
-
+import {useStore} from "vuex";
 
 const router = useRouter()
 
@@ -38,13 +37,16 @@ const Result = {
 
 const result = ref(Result.info)
 
+const store = useStore()
 
 function Init() {
   result.value = Result.info
   setTimeout(() => {
     InitConnector()
-        .then(() => {
+        .then((res) => {
           result.value = Result.success
+          store.commit('SetState', res);
+
           setTimeout(() => {
             router.push("/home")
           }, 1000)
@@ -55,7 +57,7 @@ function Init() {
           result.value = Result.error
           Result.error.subTitle = err.toString()
         })
-  }, 2000)
+  }, 1000)
 }
 
 </script>

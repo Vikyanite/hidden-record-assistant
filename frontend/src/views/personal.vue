@@ -1,10 +1,10 @@
 <script setup lang="ts">
   import {onMounted} from "vue";
-  import {CurrentSummoner} from "../../wailsjs/go/service/WailsApp";
+  import {GetCurrentSummoner} from "../../wailsjs/go/service/WailsApp";
 
   onMounted(() => {
     console.log("Personal Page Mounted");
-    CurrentSummoner()
+    GetCurrentSummoner()
       .then((summoner) => {
         console.log("info:" + summoner);
       })

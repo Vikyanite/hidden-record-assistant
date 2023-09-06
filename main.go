@@ -13,7 +13,7 @@ var assets embed.FS
 
 func main() {
 	// Create an instance of the app structure
-	app := service.NewApp()
+	app := service.DefaultApp
 
 	// Create application with options
 	err := wails.Run(&options.App{

@@ -19,7 +19,7 @@ onMounted(() => {
     })
   })
 
-  router.push("/home")
+  router.push("/loading")
 })
 
 
