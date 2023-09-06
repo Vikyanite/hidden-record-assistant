@@ -32,9 +32,9 @@ export interface IMatchData {
 
 export interface IDisplayMatch {
     poz: number; // pozitia in array a player ului cautat
-    queue: string; // queue ul fiecarui meci
+    queueDescription: string; // queue ul fiecarui meci
     gameDuration: string;
-    gameTimeAgo: string | null;
+    gameTimeAgo: string;
     kp: string;
     spellD: ISpell; // pe pozitia 0 am spellu ul in sine, pe poz 1 am descrierea, pe poz 2 am numele
     spellF: ISpell;

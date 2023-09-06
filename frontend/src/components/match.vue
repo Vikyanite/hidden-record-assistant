@@ -4,7 +4,7 @@
       <div class="match_details">
 
         <div class="match_details_time">
-          <p>{{ mainPlayer.queue }}</p>
+          <p>{{ mainPlayer.queueDescription }}</p>
 
           <p v-if="match.gameDuration<250" style="color: var(--color-remake)">Remake</p>
           <p v-else-if="match.participants[mainPlayer.poz].stats.win" style="color: var(--color-win)">Win</p>
@@ -329,7 +329,7 @@ const styleMap: { [key: number]: { description: string; iconPath: string; } } = 
 
 const mainPlayer:IDisplayMatch = reactive({
   poz: 0, //pozitia in array a player ului cautat
-  queue: null, //queue ul fiecarui meci
+  queueDescription: "", //queue ul fiecarui meci
   gameDuration: "",
   gameTimeAgo: "",
   kp: "",
@@ -392,7 +392,7 @@ function getMainPlayer() {
     }
   }
 
-  mainPlayer.queue = store.state.queues[props.match.queueId].description;
+  mainPlayer.queueDescription = store.state.queues[props.match.queueId].description;
 
   mainPlayer.spellD = store.state.spells[props.match.participants[mainPlayer.poz].spell1Id]
   mainPlayer.spellF = store.state.spells[props.match.participants[mainPlayer.poz].spell2Id]

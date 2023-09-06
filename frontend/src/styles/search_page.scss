@@ -1,0 +1,321 @@
+:root {
+  --popper-theme-background-color: #333333;
+  --popper-theme-background-color-hover: #333333;
+  --popper-theme-text-color: #ffffff;
+  --popper-theme-border-width: 0px;
+  --popper-theme-border-style: solid;
+  --popper-theme-border-radius: 6px;
+  --popper-theme-padding: 10px;
+  --popper-theme-box-shadow: 0 6px 30px -6px rgba(0, 0, 0, 0.25);
+
+}
+
+body {
+  background-color: #16161a;
+}
+.home {
+  width: 68%;
+  margin-left: auto;
+  margin-right: auto;
+  font-size: 1.6rem;
+  min-height: 100vh;
+  color: white;
+  border-right: 1px solid rgba(#72757e, 0.1);
+  border-left: 1px solid rgba(#72757e, 0.1);
+
+  padding: 0 4rem 0 4rem;
+
+  @media screen and (max-width: 1550px) {
+    width: 70%;
+  }
+  @media screen and (max-width: 1200px) {
+    width: 80%;
+  }
+  @media screen and (max-width: 1000px) {
+    width: 90%;
+    border-right: none;
+    border-left: none;
+  }
+  @media screen and (max-width: 600px) {
+    width: 100%;
+    border-right: none;
+    border-left: none;
+    padding: 0 1rem 0 1rem;
+  }
+
+  & > * {
+    margin-bottom: 8rem;
+  }
+}
+.free_to_play {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+
+  &_title {
+    text-align: center;
+    margin-bottom: 1rem;
+    color: #94a1b2;
+  }
+  &_img {
+    width: 9rem;
+    height: auto;
+    cursor: pointer;
+  }
+}
+
+.news {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 3rem;
+
+  @media screen and (max-width: 1050px) {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  }
+
+  @media screen and (max-width: 700px) {
+    grid-template-columns: 1fr;
+  }
+
+  &_title {
+    text-align: left;
+    margin-bottom: 2rem;
+    color: #94a1b2;
+  }
+
+  &_article {
+    align-self: center;
+    display: flex;
+    align-items: center;
+    //justify-content: center;
+    cursor: pointer;
+    text-decoration: none;
+
+    outline: 1px solid rgba(169, 169, 169, 0.3);
+    //outline: 1px solid rgba($color-aqua,.4);
+    outline-offset: -0.5rem;
+
+    &_details {
+      margin-left: 1rem;
+    }
+
+    &_game {
+      font-size: 1.6rem;
+      text-transform: uppercase;
+      color: #fffffe;
+    }
+
+    &_description {
+      font-size: 1.4rem;
+      color: #94a1b2;
+      margin-right: 0.5rem;
+    }
+
+    transition: all 0.2s;
+
+    &:hover {
+      .news_img {
+        transform: scale(0.9);
+      }
+      transform: translateY(-3px);
+      //box-shadow: 1px 2px 22px 7px rgba(0, 0, 0, 0.3);
+      outline-offset: 0rem;
+    }
+    &:active {
+      transform: translateY(3px);
+      //box-shadow: 1px 2px 22px 7px rgba(0, 0, 0, 0.6);
+    }
+  }
+
+  &_img {
+    width: 50%;
+    height: 50%;
+    object-fit: cover;
+    transition: all 0.2s;
+  }
+}
+.primary_img {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: auto;
+  margin-right: auto;
+  width: auto;
+  height: 35rem;
+  padding-top: 4rem;
+
+  @media screen and (max-width: 600px) {
+    height: 35rem;
+    width: 100%;
+    object-fit: fill;
+  }
+}
+
+.bookmark {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  width: 50%;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: rgba(169, 169, 169, 0.1);
+  box-shadow: 0px 5px 15px -3px rgba(0, 0, 0, 0.5);
+
+  border-radius: 1rem;
+
+  @media screen and (max-width: 1000px) {
+    width: 90%;
+  }
+
+  &_title {
+    text-align: center;
+    width: 100%;
+    padding: 1.5rem;
+  }
+
+  &_player {
+    a {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      color: inherit;
+      text-decoration: none;
+    }
+    &_container {
+      width: 100%;
+    }
+    border-top: 1px solid rgba(169, 169, 169, 0.2);
+    width: 100%;
+    padding: 1rem;
+    padding-bottom: 0;
+    transition: all 0.2s;
+    &:hover {
+      color: var(--color-win);
+    }
+
+    margin-bottom: 1rem;
+    & > a > * {
+      margin-right: 1rem;
+    }
+    img {
+      width: 3rem;
+      height: 3rem;
+      margin-right: 1rem;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 1px solid var(--color-win);
+    }
+  }
+}
+
+.search {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  margin-bottom: 1rem !important;
+
+  &_region {
+    padding: 1rem;
+    outline: none;
+    font-family: inherit;
+    font-size: 1.6rem;
+  }
+
+  &_input {
+    padding: 1.5rem 0 1.5rem 0.5rem;
+    width: 40%;
+    outline: none;
+    font-family: inherit;
+    font-size: 1.6rem;
+
+    @media screen and (max-width: 1000px) {
+      width: 90%;
+    }
+  }
+
+  ::-ms-input-placeholder {
+    /* Microsoft Edge */
+    color: #fffffe;
+  }
+  &_btn {
+    text-align: center;
+    outline: none;
+    padding: 0 2rem 0 2rem;
+    cursor: pointer;
+    background-color: var(--color-win);
+    border: none;
+    height: 6rem;
+
+    svg {
+      width: 2.5rem;
+      height: 2.5rem;
+      color: #fffffe;
+    }
+  }
+}
+//
+.profile_notFound {
+  background-color: rgba(#72757e, 0.1);
+  width: 80%;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 1rem;
+  border-radius: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 4rem;
+  font-size: 2rem;
+
+  @media screen and (max-width: 600px) {
+    width: 95%;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  &_title {
+    font-size: 3rem;
+    font-weight: bold;
+    text-align: center;
+    padding: 2rem;
+  }
+
+  &_player {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 1rem;
+
+    &_region {
+      text-transform: uppercase;
+      margin-right: 1rem;
+      width: 6rem;
+    }
+
+    &_item {
+      display: flex;
+      align-items: center;
+      color: inherit;
+      text-decoration: none;
+      transition: all 0.2s;
+
+      &:hover {
+        color: var(--color-win);
+      }
+
+      & > * {
+        margin-right: 0.5rem;
+      }
+
+      img {
+        width: 3rem;
+        height: 3rem;
+        border-radius: 50%;
+        border: 1px solid var(--color-win);
+        object-fit: cover;
+      }
+    }
+  }
+}
