@@ -2,7 +2,7 @@
 
 import {onMounted, ref} from "vue";
 import {useRouter} from "vue-router";
-import {InitConnector} from "../../wailsjs/go/service/WailsApp";
+import {InitBackend} from "../../wailsjs/go/backend/WailsApp";
 import {useStore} from "vuex";
 
 const router = useRouter()
@@ -42,11 +42,10 @@ const store = useStore()
 function Init() {
   result.value = Result.info
   setTimeout(() => {
-    InitConnector()
+    InitBackend()
         .then((res) => {
           result.value = Result.success
           store.commit('SetState', res);
-
           setTimeout(() => {
             router.push("/home")
           }, 1000)
@@ -79,8 +78,4 @@ function Init() {
 </template>
 
 <style scoped>
-.myfont {
-  font-size: 50px;
-  color: #333333;
-}
 </style>

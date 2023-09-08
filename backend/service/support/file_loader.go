@@ -1,4 +1,4 @@
-package service
+package support
 
 import (
 	"fmt"
@@ -9,16 +9,19 @@ import (
 
 type FileLoader struct {
 	http.Handler
+	conn *Connector
 }
 
-func NewFileLoader() *FileLoader {
-	return &FileLoader{}
+func NewFileLoader(conn *Connector) *FileLoader {
+	return &FileLoader{
+		conn: conn,
+	}
 }
 
 func (h *FileLoader) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 	if strings.HasPrefix(req.URL.Path, "/LCUAPI") {
 		url := strings.Replace(req.URL.Path, "/LCUAPI", "", 1)
-		bFile, _ := DefaultApp.conn.Get(url)
+		bFile, _ := h.conn.Get(url)
 		res.Write(bFile)
 	} else if strings.HasPrefix(req.URL.Path, "/LOCAL") {
 		requestedFilename := strings.Replace(req.URL.Path, "/LOCAL", "./frontend/src", 1)

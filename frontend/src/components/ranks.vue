@@ -96,21 +96,15 @@
 
 <script setup lang="ts">
 
-  import {IRankDetails} from "../types/types";
   import {useStore} from "vuex";
+  import {model} from "../../wailsjs/go/models";
   const store = useStore()
-  defineProps ({
-    rank_solo: {
-      // 使用接口定义 rank_solo 的属性类型
-      type: Object as () => IRankDetails,
-      required: true,
-    },
-    rank_flex: {
-      // 使用接口定义 rank_flex 的属性类型
-      type: Object as () => IRankDetails,
-      required: true,
-    },
-  })
+  
+
+  const props = defineProps <{
+    rank_solo: model.RankDetails,
+    rank_flex: model.RankDetails,
+  }>()
 
 </script>
 

@@ -41,11 +41,9 @@
   import {ISummoner} from "../types/types";
   import {useStore} from "vuex";
   const store = useStore()
-  defineProps({
-    data: {
-      type: Object as () => ISummoner,
-    },
-  })
+  defineProps<{
+    data:  ISummoner,
+  }>()
 
 </script>
 

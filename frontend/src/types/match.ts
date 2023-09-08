@@ -1,4 +1,5 @@
 import {IPerk, ISpell} from "./store";
+import {model} from "../../wailsjs/go/models";
 
 export interface IMatchHistory {
     accountId: number;
@@ -42,43 +43,6 @@ export interface IDisplayMatch {
     runeSecondaryStyle: number;
     toggleAdvancedDetails: boolean;
     realChampsNames: string[];  // un array cu toate numele reale ale campionilor, pt ca unii nu corespund ex: MonkeyKing - Wukong
-}
-
-export interface IMatchStatistic {
-    mainPlayerPoz: number[]; // array with all positions of main player in all matches
-    kills: number;
-    assists: number;
-    deaths: number;
-    wins: number;
-    defeats: number;
-
-    gold: number;
-    vision_score: number;
-    firstBloodTimes: number;
-    cs: number;
-    control_wards: number;
-
-    lane: string[]; // vector cu toate lane-urile
-    preferablyLane: string | null; // cel mai jucat lane
-    preferablyLaneGames: number; // nr meciurilor jucate pe cel mai jucat lane
-    champs: number[]; // vector cu toți campionii
-    preferablyChamp1: number | null; // cel mai jucat campion
-    preferablyChamp2: number | null; // al doilea cel mai jucat campion
-
-    preferablyChamp1_games: number;
-    preferablyChamp2_games: number;
-
-    kills_preferablyLane: number; // statistici pe cel mai jucat lane
-    deaths_preferablyLane: number;
-    assists_preferablyLane: number;
-    wins_preferablyLane: number;
-    defeats_preferablyLane: number;
-
-    kills_preferablyChamps: [number, number]; // statistici pentru cei mai jucati campioni [0: cel mai jucat champ, 1: al 2-lea cel mai jucat campion]
-    deaths_preferablyChamps: [number, number];
-    assists_preferablyChamps: [number, number];
-    wins_preferablyChamps: [number, number];
-    defeats_preferablyChamps: [number, number];
 }
 
 interface IParticipantIdentity {

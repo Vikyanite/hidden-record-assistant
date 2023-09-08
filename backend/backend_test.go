@@ -1,15 +1,17 @@
 package backend
 
 import (
-	"hidden-record-assistant/backend/module/cmdx"
+	"hidden-record-assistant/backend/service/support"
 	"testing"
 )
 
 func Test(t *testing.T) {
-	exec, err := cmdx.Exec("tasklist|findstr LeagueClientUx.exe")
+	conn := support.NewConnector()
+	app := NewApp(conn)
+	init, err := app.InitBackend()
 	if err != nil {
-		t.Log(err)
+		t.Error(err)
 		return
 	}
-	t.Log(string(exec))
+	t.Log(init)
 }

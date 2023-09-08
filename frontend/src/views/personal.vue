@@ -1,17 +1,17 @@
 <script setup lang="ts">
-  import {onMounted} from "vue";
-  import {GetCurrentSummoner} from "../../wailsjs/go/service/WailsApp";
-
-  onMounted(() => {
-    console.log("Personal Page Mounted");
-    GetCurrentSummoner()
-      .then((summoner) => {
-        console.log("info:" + summoner);
-      })
-      .catch((err) => {
-        console.log("err:" + err);
-      })
-  })
+  // import {onMounted} from "vue";
+  // import {GetCurrentSummoner} from "../../wailsjs/go/service/WailsApp";
+  //
+  // onMounted(() => {
+  //   console.log("Personal Page Mounted");
+  //   GetCurrentSummoner()
+  //     .then((summoner) => {
+  //       console.log("info:" + summoner);
+  //     })
+  //     .catch((err) => {
+  //       console.log("err:" + err);
+  //     })
+  // })
 </script>
 
 <template>
