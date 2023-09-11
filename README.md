@@ -1,4 +1,17 @@
 # LOL隐藏战绩查询小助手
+## 快速上手
+
+1. 以管理员权限打开IDE
+2. 打开并登录LOL客户端
+
+3. 在项目主目录(/hidden-record-assistant)下，终端输入一下代码即可运行项目
+
+``` sh
+wails dev
+```
+
+## 更新
+
 UPDATE 2023/8.28:
 
 vue小成，总算可以开始写了~
@@ -44,7 +57,8 @@ UPDATE 2023/8.22:
 
 [real-web-world/hh-lol-prophet: lol 对局先知 上等马 牛马分析程序](https://github.com/real-web-world/hh-lol-prophet)
 
-[Zzaphkiel/Seraphine: 基于 LCU API 的英雄联盟战绩查询工具](https://github.com/Zzaphkiel/Seraphine)
-
 [上等马还是下等马，英雄联盟LCUAPI研究](https://cloud.tencent.com/developer/article/1987709)
 
+界面与API参考：[Zzaphkiel/Seraphine: 基于 LCU API 的英雄联盟战绩查询工具](https://github.com/Zzaphkiel/Seraphine)
+
+界面参考：[LOLstatsVUE: Full league of legends props.Datas app (like OP.GG)](https://github.com/tudorcrisan1231/LOLstatsVUE/tree/master)
