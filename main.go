@@ -19,8 +19,8 @@ func main() {
 	// Create application with options
 	err := wails.Run(&options.App{
 		Title:         "hidden-record-assistant",
-		Width:         1024,
-		Height:        768,
+		Width:         1280,
+		Height:        720,
 		DisableResize: true,
 		AssetServer: &assetserver.Options{
 			Assets:  assets,

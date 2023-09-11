@@ -1,12 +1,11 @@
 <script lang="ts" setup>
 import {onBeforeMount, reactive, ref} from "vue";
 
-import Ranks from "../components/ranks.vue";
-import RecentSummary from "../components/recent_summary.vue";
+import Ranks from "../components/Ranks.vue";
+import RecentSummary from "../components/RecentSummary.vue";
 
-import BaseStats from "../components/baseStats.vue";
-import Match from "../components/match.vue";
-import {ISummoner} from "../types/types";
+import BaseStats from "../components/BaseStats.vue";
+import Match from "../components/Match.vue";
 import {model} from "../../wailsjs/go/models";
 import {useStore} from "vuex";
 

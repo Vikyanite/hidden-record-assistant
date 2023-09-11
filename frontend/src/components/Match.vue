@@ -132,15 +132,7 @@
         <div class="match_items_container">
           <div class="match_items">
             <div
-              v-for="i in [
-                'item0',
-                'item1',
-                'item2',
-                'item3',
-                'item4',
-                'item5',
-                'item6',
-              ]"
+              v-for="i in ['item0Ob', 'item1Ob', 'item2Ob', 'item3Ob', 'item4Ob', 'item5Ob', 'item6Ob']"
               :key="i"
             >
               <div v-if="(data.participants[data.poz].stats as any)[i].id == 0">
@@ -262,7 +254,7 @@
       </div>
 
       <div v-if="data.toggleAdvancedDetails && data.realChampsNames">
-        <MatchDetail :champsData="data.realChampsNames"></MatchDetail>
+        <MatchDetail :matchInfo="data"></MatchDetail>
       </div>
 
     </div>
@@ -272,6 +264,7 @@
 
 <script lang="ts" setup>
 import {ref} from "vue";
+import MatchDetail from "./MatchDetail.vue";
 import Popper from "vue3-popper";
 
 import { useStore } from 'vuex';

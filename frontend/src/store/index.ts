@@ -1,7 +1,6 @@
 // index.ts
 
 import { createStore, Store } from 'vuex';
-import {IChampion, IItem, IPerk, IQueue, ISpell} from "../types/store";
 import {model} from "../../wailsjs/go/models";
 import InitBackendData = model.InitBackendData;
 

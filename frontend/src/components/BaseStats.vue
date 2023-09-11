@@ -38,11 +38,11 @@
 
 <script lang="ts" setup>
 
-  import {ISummoner} from "../types/types";
   import {useStore} from "vuex";
+  import {model} from "../../wailsjs/go/models";
   const store = useStore()
   defineProps<{
-    data:  ISummoner,
+    data:  model.SummonerBaseInfo,
   }>()
 
 </script>

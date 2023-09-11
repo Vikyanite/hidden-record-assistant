@@ -7,10 +7,6 @@
             :src="store.getters.LocalAssetPrefix() + '/assets/images/tier/' + rank_solo.tier + '.png'"
             alt=""
           />
-          <img
-              :src="store.getters.LocalAssetPrefix() + '/assets/images/tier/' + rank_solo.tier + '.png'"
-              alt=""
-          />
         </div>
         <div class="ranks_rank_text">
           <h3 class="ranks_rank_title">Ranked SOLO/DUO</h3>
@@ -27,10 +23,7 @@
             Win ratio:
             {{
               (
-                (rank_solo.wins /
-                  (rank_solo.wins +
-                    rank_solo.losses)) *
-                100
+                (rank_solo.wins / (rank_solo.wins + rank_solo.losses)) * 100
               ).toFixed(0)
             }}%
           </p>

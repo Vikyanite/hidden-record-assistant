@@ -136,6 +136,7 @@ func findMostFrequentElements(arr []int) (max1, cnt1, max2, cnt2 int) {
 }
 
 func GetDisplayMatchFromMatchData(puuid string, match model.MatchData, manager IAssets) (data model.DisplayMatch) {
+	FixMatchData(&match, manager)
 	// Poz
 	var Poz int
 	for i := range match.ParticipantIdentities {
@@ -152,59 +153,107 @@ func GetDisplayMatchFromMatchData(puuid string, match model.MatchData, manager I
 		ToggleAdvancedDetails: false,
 		GameDuration:          fmt.Sprintf("%02dmin %02ds", match.GameDuration/60, match.GameDuration-match.GameDuration/60*60),
 		GameTimeAgo:           msToTime(int(time.Now().UnixMilli()) - match.GameCreation),
-		QueueDescription:      manager.GetQueueById(match.QueueId).Description,
-		SpellD:                manager.GetSpellById(match.Participants[Poz].Spell1Id),
-		SpellF:                manager.GetSpellById(match.Participants[Poz].Spell2Id),
-		RunePrimary:           manager.GetPerkById(match.Participants[Poz].Stats.Perk0),
-		RuneSecondary:         manager.GetPerkStyleById(match.Participants[Poz].Stats.PerkSubStyle),
+		QueueDescription:      match.QueueObject.Description,
+		SpellD:                match.Participants[Poz].Spell1Object,
+		SpellF:                match.Participants[Poz].Spell2Object,
+		RunePrimary:           match.Participants[Poz].Stats.Perk0Object,
+		RuneSecondary:         match.Participants[Poz].Stats.PerkSubStyleObject,
 		ParticipantIdentities: match.ParticipantIdentities,
 		GameDurationInt:       match.GameDuration,
+		Teams:                 match.Teams,
 	}
 
 	// Kp & Participants
 	teamkills := 0
-	for i := range match.Participants {
+	for i, participant := range match.Participants {
 		if match.Participants[i].TeamId == match.Participants[Poz].TeamId {
 			teamkills += match.Participants[i].Stats.Kills
 		}
-		data.Participants = append(data.Participants, GetDisplayParticipantFromParticipant(match.Participants[i], manager))
+		data.Participants = append(data.Participants, participant)
+
+		// Overview.TeamBlue/TeamRed
+		if i < 5 {
+			data.Overview.TeamBlue.Kills += participant.Stats.Kills
+			data.Overview.TeamBlue.Assists += participant.Stats.Assists
+			data.Overview.TeamBlue.Deaths += participant.Stats.Deaths
+			data.Overview.TeamBlue.Gold += participant.Stats.GoldEarned
+		} else {
+			data.Overview.TeamRed.Kills += participant.Stats.Kills
+			data.Overview.TeamRed.Assists += participant.Stats.Assists
+			data.Overview.TeamRed.Deaths += participant.Stats.Deaths
+			data.Overview.TeamRed.Gold += participant.Stats.GoldEarned
+		}
+
+		// Overview.SpellDs/SpellFs
+		data.Overview.SpellDs = append(data.Overview.SpellDs, match.Participants[i].Spell1Object)
+		data.Overview.SpellFs = append(data.Overview.SpellFs, match.Participants[i].Spell2Object)
+
+		// Breakdown
+		dmg := float64(data.Participants[i].Stats.TotalMinionsKilled + data.Participants[i].Stats.NeutralMinionsKilled)
+		if dmg > data.Breakdown.HighestDMG.Value {
+			data.Breakdown.HighestDMG = model.BreakdownItem{
+				Value:          dmg,
+				ChampionObject: data.Participants[i].ChampionObject,
+				SummonerName:   data.ParticipantIdentities[i].Player.SummonerName,
+			}
+		}
+
+		cs := float64(data.Participants[i].Stats.TotalMinionsKilled + data.Participants[i].Stats.NeutralMinionsKilled)
+		if cs > data.Breakdown.HighestCS.Value {
+			data.Breakdown.HighestCS = model.BreakdownItem{
+				Value:          cs,
+				ChampionObject: data.Participants[i].ChampionObject,
+				SummonerName:   data.ParticipantIdentities[i].Player.SummonerName,
+			}
+		}
+
+		gold := float64(data.Participants[i].Stats.GoldEarned)
+		if gold > data.Breakdown.BestGold.Value {
+			data.Breakdown.BestGold = model.BreakdownItem{
+				Value:          gold,
+				ChampionObject: data.Participants[i].ChampionObject,
+				SummonerName:   data.ParticipantIdentities[i].Player.SummonerName,
+			}
+		}
+
+		vs := float64(data.Participants[i].Stats.VisionScore)
+		if vs > data.Breakdown.BestVS.Value {
+			data.Breakdown.BestVS = model.BreakdownItem{
+				Value:          vs,
+				ChampionObject: data.Participants[i].ChampionObject,
+				SummonerName:   data.ParticipantIdentities[i].Player.SummonerName,
+			}
+		}
+
+		kda := float64(data.Participants[i].Stats.Kills + data.Participants[i].Stats.Assists)
+		if data.Participants[i].Stats.Deaths != 0 {
+			kda /= float64(data.Participants[i].Stats.Deaths)
+		}
+		if kda > data.Breakdown.HighestKDA.Value {
+			data.Breakdown.HighestKDA = model.BreakdownItem{
+				Value:          kda,
+				ChampionObject: data.Participants[i].ChampionObject,
+				SummonerName:   data.ParticipantIdentities[i].Player.SummonerName,
+			}
+		}
+
+		mvp := float64(data.Participants[i].Stats.Kills) + 0.75*float64(data.Participants[i].Stats.Assists) - float64(data.Participants[i].Stats.Deaths)*0.5
+		if mvp > data.Breakdown.Mvp.Value {
+			data.Breakdown.Mvp = model.BreakdownItem{
+				Value:          mvp,
+				ChampionObject: data.Participants[i].ChampionObject,
+				SummonerName:   data.ParticipantIdentities[i].Player.SummonerName,
+			}
+		}
+
+		// RealChampsName
+		data.RealChampsNames = append(data.RealChampsNames, match.Participants[i].ChampionObject.Name)
 	}
+
 	if teamkills != 0 {
 		data.Kp = fmt.Sprintf("%d", (match.Participants[Poz].Stats.Kills+match.Participants[Poz].Stats.Assists)*100/teamkills)
 	}
 
-	// RealChampsName
-	for i := range match.Participants {
-		data.RealChampsNames = append(data.RealChampsNames, manager.GetChampionById(match.Participants[i].ChampionId).Name)
-	}
-
-	return
-}
-
-func GetDisplayParticipantFromParticipant(p model.Participant, manager IAssets) (data model.DisplayParticipant) {
-	data.Stats = GetDisplayStatsFromStats(p.Stats, manager)
-	data.ChampionId = p.ChampionId
-	return
-}
-
-func GetDisplayStatsFromStats(s model.Stats, manager IAssets) (data model.DisplayStats) {
-	data = model.DisplayStats{
-		Kills:                s.Kills,
-		Deaths:               s.Deaths,
-		Assists:              s.Assists,
-		Win:                  s.Win,
-		TotalMinionsKilled:   s.TotalMinionsKilled,
-		NeutralMinionsKilled: s.NeutralMinionsKilled,
-		ChampLevel:           s.ChampLevel,
-		VisionScore:          s.VisionScore,
-		Item0:                manager.GetItemById(s.Item0),
-		Item1:                manager.GetItemById(s.Item1),
-		Item2:                manager.GetItemById(s.Item2),
-		Item3:                manager.GetItemById(s.Item3),
-		Item4:                manager.GetItemById(s.Item4),
-		Item5:                manager.GetItemById(s.Item5),
-		Item6:                manager.GetItemById(s.Item6),
-	}
 	return
 }
 
@@ -226,4 +275,32 @@ func msToTime(duration int) (gameTimeAgo string) {
 		}
 	}
 	return
+}
+
+func FixMatchData(match *model.MatchData, manager IAssets) {
+	match.QueueObject = manager.GetQueueById(match.QueueId)
+	for i := range match.Participants {
+		match.Participants[i].Spell1Object = manager.GetSpellById(match.Participants[i].Spell1Id)
+		match.Participants[i].Spell2Object = manager.GetSpellById(match.Participants[i].Spell2Id)
+
+		match.Participants[i].Stats.Perk0Object = manager.GetPerkById(match.Participants[i].Stats.Perk0)
+
+		match.Participants[i].Stats.PerkSubStyleObject = manager.GetPerkStyleById(match.Participants[i].Stats.PerkSubStyle)
+
+		match.Participants[i].ChampionObject = manager.GetChampionById(match.Participants[i].ChampionId)
+
+		match.Participants[i].Stats.Item0Object = manager.GetItemById(match.Participants[i].Stats.Item0)
+		match.Participants[i].Stats.Item1Object = manager.GetItemById(match.Participants[i].Stats.Item1)
+		match.Participants[i].Stats.Item2Object = manager.GetItemById(match.Participants[i].Stats.Item2)
+		match.Participants[i].Stats.Item3Object = manager.GetItemById(match.Participants[i].Stats.Item3)
+		match.Participants[i].Stats.Item4Object = manager.GetItemById(match.Participants[i].Stats.Item4)
+		match.Participants[i].Stats.Item5Object = manager.GetItemById(match.Participants[i].Stats.Item5)
+		match.Participants[i].Stats.Item6Object = manager.GetItemById(match.Participants[i].Stats.Item6)
+	}
+	for i := range match.Teams {
+		for j := range match.Teams[i].Bans {
+			match.Teams[i].Bans[j].ChampionObject = manager.GetChampionById(match.Teams[i].Bans[j].ChampionId)
+		}
+	}
+
 }

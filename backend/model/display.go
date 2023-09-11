@@ -1,11 +1,12 @@
 package model
 
 type DisplayMatch struct {
-	Poz                   int                   `json:"poz"`
-	QueueDescription      string                `json:"queueDescription"`
-	GameDuration          string                `json:"gameDuration"`
-	GameDurationInt       int                   `json:"gameDurationInt"`
-	GameTimeAgo           string                `json:"gameTimeAgo"`
+	Poz              int    `json:"poz"`
+	QueueDescription string `json:"queueDescription"`
+	GameDuration     string `json:"gameDuration"`
+	GameDurationInt  int    `json:"gameDurationInt"`
+	GameTimeAgo      string `json:"gameTimeAgo"`
+	// kp是团战参与率
 	Kp                    string                `json:"kp"`
 	SpellD                Spell                 `json:"spellD"`
 	SpellF                Spell                 `json:"spellF"`
@@ -13,8 +14,25 @@ type DisplayMatch struct {
 	RuneSecondary         PerkStyle             `json:"runeSecondaryStyle"`
 	ToggleAdvancedDetails bool                  `json:"toggleAdvancedDetails"`
 	RealChampsNames       []string              `json:"realChampsNames"`
-	Participants          []DisplayParticipant  `json:"participants"`
+	Participants          []Participant         `json:"participants"`
 	ParticipantIdentities []ParticipantIdentity `json:"participantIdentities"`
+	Overview              Overview              `json:"overview"`
+	Breakdown             Breakdown             `json:"breakdown"`
+	Teams                 []Team                `json:"teams"`
+}
+
+type Overview struct {
+	TeamRed  DisplayTeam `json:"teamRed"`
+	TeamBlue DisplayTeam `json:"teamBlue"`
+	SpellDs  []Spell     `json:"spellDs"`
+	SpellFs  []Spell     `json:"spellFs"`
+}
+
+type DisplayTeam struct {
+	Kills   int `json:"kills"`
+	Deaths  int `json:"deaths"`
+	Assists int `json:"assists"`
+	Gold    int `json:"gold"`
 }
 
 // RecentMatchStatistic 根据召唤师的比赛数据计算出的统计数据
@@ -53,27 +71,4 @@ type RecentMatchStatistic struct {
 	AssistsPreferablyChamps [2]int `json:"assists_preferablyChamps"`
 	WinsPreferablyChamps    [2]int `json:"wins_preferablyChamps"`
 	DefeatsPreferablyChamps [2]int `json:"defeats_preferablyChamps"`
-}
-
-type DisplayParticipant struct {
-	Stats      DisplayStats `json:"stats"`
-	ChampionId int          `json:"championId"`
-}
-
-type DisplayStats struct {
-	Kills                int  `json:"kills"`
-	Deaths               int  `json:"deaths"`
-	Assists              int  `json:"assists"`
-	Win                  bool `json:"win"`
-	TotalMinionsKilled   int  `json:"totalMinionsKilled"`
-	NeutralMinionsKilled int  `json:"neutralMinionsKilled"`
-	ChampLevel           int  `json:"champLevel"`
-	VisionScore          int  `json:"visionScore"`
-	Item0                Item `json:"item0"`
-	Item1                Item `json:"item1"`
-	Item2                Item `json:"item2"`
-	Item3                Item `json:"item3"`
-	Item4                Item `json:"item4"`
-	Item5                Item `json:"item5"`
-	Item6                Item `json:"item6"`
 }

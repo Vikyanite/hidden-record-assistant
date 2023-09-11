@@ -2,7 +2,6 @@
 
 import {onMounted, ref} from "vue";
 import {useRouter} from "vue-router";
-import {Close} from "@element-plus/icons-vue";
 const isCollapse = ref(true)
 
 const router = useRouter()
