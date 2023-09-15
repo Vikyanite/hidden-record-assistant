@@ -32,7 +32,7 @@
             <p>Highest DMG</p>
             <h2>{{stats.highestDMG.value/1000}}</h2>
             <div class="breakdown_box_text_name">
-              <img :src="'https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-icons/'+ stats.highestDMG.championOb.id + '.png'" alt="lol_img">
+              <img :src="stats.highestDMG.championOb.squarePortraitPath" alt="lol_img">
               <p>{{stats.highestDMG.summonerName}}</p>
             </div>
           </div>
@@ -51,7 +51,7 @@
             <p>Highest CS</p>
             <h2>{{stats.highestCS.value}}</h2>
             <div class="breakdown_box_text_name">
-              <img :src="'https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-icons/'+ stats.highestCS.championOb.id + '.png'" alt="lol_img">
+              <img :src="stats.highestCS.championOb.squarePortraitPath" alt="lol_img">
               <p>{{stats.highestCS.summonerName}}</p>
             </div>
           </div>
@@ -70,7 +70,7 @@
             <p>Best Gold</p>
             <h2>{{stats.bestGold.value/1000}}</h2>
             <div class="breakdown_box_text_name">
-              <img :src="'https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-icons/'+ stats.bestGold.championOb.id + '.png'" alt="lol_img">
+              <img :src="stats.bestGold.championOb.squarePortraitPath" alt="lol_img">
               <p>{{stats.bestGold.summonerName}}</p>
             </div>
           </div>

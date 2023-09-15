@@ -2,9 +2,13 @@
 
 import {onMounted, ref} from "vue";
 import {useRouter} from "vue-router";
-const isCollapse = ref(true)
+import {Expand, Fold, User} from "@element-plus/icons-vue";
+import {useStore} from "vuex";
 
+const isCollapse = ref(true)
 const router = useRouter()
+const store = useStore()
+
 onMounted(()=> {
   // 在页面加载时手动触发路由导航到 "/home/personal"
   router.push("/home/personal");
@@ -23,8 +27,8 @@ onMounted(()=> {
             :collapse="isCollapse"
         >
           <el-menu-item @click="isCollapse=!isCollapse" class="menu-collapse-icon">
-            <el-icon v-show="isCollapse"><Expand /></el-icon>
-            <el-icon v-show="!isCollapse"><Fold /></el-icon>
+            <el-icon v-if="isCollapse"><Expand /></el-icon>
+            <el-icon v-else><Fold /></el-icon>
           </el-menu-item>
           <el-divider></el-divider>
           <el-menu-item index="/home/personal">
@@ -57,18 +61,21 @@ onMounted(()=> {
 
 <style scoped>
 
+
+.el-main {
+  height: 100vh;
+  overflow: visible;
+}
+
 .el-menu {
   height:100vh;
-  overflow: hidden;
   transition: 0.2s;
+  overflow: visible;
 }
 
 .el-aside {
   width: auto;
-}
-
-.el-menu--collapse {
-  width: calc(var(--el-menu-icon-width) + var(--el-menu-base-level-padding) * 2 + var(--el-menu-item-margin) * 2);
+  overflow: visible;
 }
 
 .el-divider--horizontal{
@@ -78,10 +85,11 @@ onMounted(()=> {
 .el-menu-item {
   border-radius: 5px;
   margin: 5px;
+
 }
 
 .menu-collapse-icon {
-  width: 35px;
+  width: 100%;
 }
 
 .menu-item-text {

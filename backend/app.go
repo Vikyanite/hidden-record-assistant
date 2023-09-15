@@ -4,8 +4,10 @@ import (
 	"context"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 	"hidden-record-assistant/backend/model"
+	"hidden-record-assistant/backend/module/zlog"
 	"hidden-record-assistant/backend/service"
 	"hidden-record-assistant/backend/service/support"
+	"time"
 )
 
 // WailsApp struct
@@ -33,6 +35,12 @@ func (a *WailsApp) Startup(ctx context.Context) {
 }
 
 func (a *WailsApp) InitBackend() (data model.InitBackendData, err error) {
+	defer func() func() {
+		start := time.Now()
+		return func() {
+			zlog.Debugf("InitBackend Cost: %s", time.Since(start).String())
+		}
+	}()()
 	// 所有的功能都依赖于conn的连接，所以先初始化conn
 	data.Auth, err = a.conn.Init(func() { runtime.EventsEmit(a.ctx, "disconnected") })
 	if err != nil {
@@ -45,6 +53,15 @@ func (a *WailsApp) InitBackend() (data model.InitBackendData, err error) {
 		return
 	}
 
-	data.CurrentSummoner, err = a.supportApp.GetCurrentSummoner()
+	return
+}
+
+func (a *WailsApp) GetCurrentSummoner() (data model.Summoner, err error) {
+	data, err = a.supportApp.GetCurrentSummoner()
+	return
+}
+
+func (a *WailsApp) GetSummonerByName(name string) (data model.Summoner, err error) {
+	data, err = a.supportApp.GetSummonerByName(name)
 	return
 }

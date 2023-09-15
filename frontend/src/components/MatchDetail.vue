@@ -19,9 +19,9 @@
       <advanced :matchData="matchInfo"></advanced>
     </div>
 
-    <div v-else-if="activeSection === 'Breakdown'">
-      <breakdown :stats="matchInfo.breakdown"></breakdown>
-    </div>
+<!--    <div v-else-if="activeSection === 'Breakdown'">-->
+<!--      <breakdown :stats="matchInfo.breakdown"></breakdown>-->
+<!--    </div>-->
 
       <!-- <p style="width:200px;">{{this.matchInfo}}</p>  -->
   </div>
@@ -39,7 +39,10 @@ import {model} from "../../wailsjs/go/models";
     matchInfo: model.DisplayMatch,
   }>()
 
-  const toggle = ["Overview", "Timeline", "Advanced", "Breakdown"];
+  const toggle = ["Overview",
+    "Advanced",
+    // "Breakdown"
+  ];
 
   const activeSection = ref("Overview");
 
@@ -53,7 +56,7 @@ import {model} from "../../wailsjs/go/models";
 .navbar {
   width: 100%;
   display: grid;
-  grid-template-columns: repeat(4,1fr);
+  grid-template-columns: repeat(3,1fr);
   align-items: center;
   gap: .5rem;
   justify-content: space-between;
@@ -69,10 +72,6 @@ import {model} from "../../wailsjs/go/models";
     font-family: inherit;
     cursor: pointer;
     transition: all .2s;
-    @media screen and (max-width: 500px) {
-      font-size: 1.1rem !important;
-    }
-
 
 
     &:hover {

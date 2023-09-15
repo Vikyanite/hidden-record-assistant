@@ -1,8 +1,7 @@
 <template>
   <div class="match" style="display:flex; flex-direction:column;"> 
-    <div v-if="data.poz != null" style="width: 100%" :class="data.gameDurationInt<250 ? 'remake' : (data.participants[data.poz].stats.win ? 'win' : 'lose')">
+    <div style="width: 100%" :class="data.gameDurationInt<250 ? 'remake' : (data.participants[data.poz].stats.win ? 'win' : 'lose')">
       <div class="match_details">
-
         <div class="match_details_time">
           <p>{{ data.queueDescription }}</p>
 
@@ -10,25 +9,22 @@
           <p v-else-if="data.participants[data.poz].stats.win" style="color: var(--color-win)">Win</p>
           <p v-else style="color: var(--color-lose)">Defeat</p>
           <p v-if="data.gameDurationInt">{{ data.gameDuration }}</p>
-          <p>{{ data.gameTimeAgo }} ago</p>
+          <p>{{ data.gameTimeAgo }}前</p>
         </div>
 
         <div class="match_details_champ" >
-          <p v-if="data.realChampsNames[data.poz]">{{ data.realChampsNames[data.poz] }}</p>
+<!--          <p v-if="data.realChampsNames[data.poz]">{{ data.realChampsNames[data.poz] }}</p>-->
           <img
-            :src="
-              'https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-icons/' +
-              data.participants[data.poz].championId +
-              '.png'
-            "
+            :src="store.getters.LCUAPIPrefix(data.participants[data.poz].championOb.squarePortraitPath)"
             alt="champ img"
           />
+          <p class="match_details_champ_level">{{ data.participants[data.poz].stats.champLevel }}</p>
         </div>
 
         <div class="match_details_spells">
           <Popper placement="top" arrow hover>
             <img
-              :src=" store.getters.LCUAPIPrefix() + data.spellD.iconPath"
+              :src=" store.getters.LCUAPIPrefix(data.spellD.iconPath)"
               alt="spell img"
               class="match_details_spells_spellD"
             />
@@ -43,7 +39,7 @@
 
           <Popper placement="top" arrow hover>
             <img
-                :src="store.getters.LCUAPIPrefix() + data.runePrimary.iconPath"
+              :src="store.getters.LCUAPIPrefix(data.runePrimary.iconPath)"
               alt="runes img"
               class="match_details_spells_runePrimary"
             />
@@ -59,7 +55,7 @@
           <Popper placement="top" arrow hover>
             <img
                 referrerpolicy="no-referrer"
-                :src=" store.getters.LCUAPIPrefix() + data.spellF.iconPath"
+                :src=" store.getters.LCUAPIPrefix(data.spellF.iconPath)"
               alt="spell img"
               class="match_details_spells_spellF"
             />
@@ -75,8 +71,7 @@
           <Popper placement="top" arrow hover
                   v-if="data.runeSecondaryStyle">
             <img
-
-              :src="store.getters.LCUAPIPrefix() + data.runeSecondaryStyle.iconPath"
+              :src="store.getters.LCUAPIPrefix(data.runeSecondaryStyle.iconPath)"
               alt="runes img"
               class="match_details_spells_runeSecondary"
             />
@@ -99,34 +94,20 @@
             KDA:
             {{
               (
-                (data.participants[data.poz].stats.kills +
-                    data.participants[data.poz].stats.assists) /
-                data.participants[data.poz].stats.deaths
+                (data.participants[data.poz].stats.kills + data.participants[data.poz].stats.assists)
+                  / max(1, data.participants[data.poz].stats.deaths)
               ).toFixed(2)
             }}
           </p>
         </div>
 
         <div class="match_details_level">
-          <p>Level {{ data.participants[data.poz].stats.champLevel }}</p>
           <p>
-            {{
-              data.participants[data.poz].stats.totalMinionsKilled +
-              data.participants[data.poz].stats.neutralMinionsKilled
+            补刀(cs): {{
+              data.participants[data.poz].stats.totalMinionsKilled + data.participants[data.poz].stats.neutralMinionsKilled
             }}
-            CS
           </p>
-          <p>
-            {{
-              (
-                (data.participants[data.poz].stats.totalMinionsKilled +
-                    data.participants[data.poz].stats.neutralMinionsKilled)
-                / (data.gameDurationInt / 60)
-              ).toFixed(1)
-            }}
-            CS/MIN
-          </p>
-          <p>{{ data.kp }}% KP</p>
+          <p>{{ data.kp }}% 参团率</p>
         </div>
 
         <div class="match_items_container">
@@ -150,7 +131,7 @@
               <div v-else>
                 <Popper placement="top" arrow hover>
                   <img
-                    :src="store.getters.LCUAPIPrefix() + (data.participants[data.poz].stats as any)[i].iconPath"
+                    :src="store.getters.LCUAPIPrefix((data.participants[data.poz].stats as any)[i].iconPath)"
                     alt="item"
                   />
                   <template #content>
@@ -177,55 +158,8 @@
             </div>
           </div>
           <p class="match_items_vs">
-            {{ data.participants[data.poz].stats.visionScore }} vision
-            score
+            {{ data.participants[data.poz].stats.visionScore }} 视野得分
           </p>
-        </div>
-
-        <div class="match_participanti">
-          <div v-for="(i, index) in data.participants" :key="index">
-            <div v-if="index < 5" class="match_participanti_name">
-              <img
-                :src="
-                  'https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-icons/' +
-                  data.participants[index].championId +
-                  '.png'
-                "
-                alt="champ img"
-              />
-              <a
-                :href="
-                  '/' +
-                  data.participantIdentities[index].player.summonerName
-                "
-                ><p>
-                  {{ data.participantIdentities[index].player.summonerName }}
-                </p>
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <div class="match_participanti">
-          <div v-for="(i, index) in data.participants" :key="index">
-            <div v-if="index >= 5" class="match_participanti_name">
-              <img
-                :src="
-                  'https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-icons/' +
-                  data.participants[index].championId +
-                  '.png'
-                "
-                alt="champ img"
-              />
-              <a
-                :href="
-                  '/' +
-                  data.participantIdentities[index].player.summonerName
-                "
-                ><p>{{ data.participantIdentities[index].player.summonerName }}</p>
-              </a>
-            </div>
-          </div>
         </div>
 
         <div
@@ -250,10 +184,9 @@
           </svg>
         </div>
 
-
       </div>
 
-      <div v-if="data.toggleAdvancedDetails && data.realChampsNames">
+      <div v-if="data.toggleAdvancedDetails">
         <MatchDetail :matchInfo="data"></MatchDetail>
       </div>
 
@@ -270,6 +203,7 @@ import Popper from "vue3-popper";
 import { useStore } from 'vuex';
 
 import {model} from "../../wailsjs/go/models";
+import {max} from "@floating-ui/utils";
 
 const store = useStore();
 
@@ -281,5 +215,166 @@ const props = defineProps<{
 
 
 <style scoped lang="scss">
-@import "../styles/match_details.scss"; // search_page styles
+.match {
+  padding: 0.5rem 1rem 0.5rem 1rem;
+  display: flex;
+  text-align: center;
+  font-size: 1.2rem;
+
+  img {
+    border-radius: 3px;
+    object-fit: cover;
+  }
+  &_details {
+    height: 100% !important;
+    width: 100% !important;
+    display: grid;
+    grid-template-columns: 13% min-content min-content max-content max-content min-content 10% 10% min-content;
+    align-items: center;
+    justify-content: space-between;
+
+    &_time {
+      display: flex;
+      flex-direction: column;
+    }
+
+    &_champ {
+      img {
+        width: 6rem;
+        height: 6rem;
+      }
+    }
+
+    &_spells {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      img {
+        width: 2.5rem;
+        height: 2.5rem;
+        margin-right: 0.5rem;
+        margin-top: 0.5rem;
+        cursor: pointer;
+      }
+
+      &_runePrimary {
+        background-color: black;
+        border-radius: 50% !important;
+      }
+    }
+    .spell_name {
+      color: var(--color-yellow);
+      font-weight: bold;
+    }
+    &_score {
+      display: flex;
+      flex-direction: column;
+    }
+  }
+
+  &_items {
+    display: grid;
+    grid-template-columns: repeat(4, max-content);
+    justify-items: center;
+    align-items: center;
+    img {
+      width: 3rem;
+      height: 3rem;
+      margin-right: 0.3rem;
+    }
+
+    &_container {
+      display: flex;
+      flex-direction: column;
+    }
+  }
+
+  &_participanti {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+
+    a {
+      text-decoration: none;
+      color: inherit;
+      overflow: hidden;
+
+      p {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+    }
+
+    img {
+      width: 2rem;
+      height: 2rem;
+      object-fit: cover;
+      margin-right: 0.5rem;
+    }
+    &_name {
+      display: flex;
+      align-items: center;
+      margin-right: 0.3rem;
+      margin-bottom: 0.3rem;
+    }
+  }
+
+  &_btn {
+    height: 100%;
+    padding: 0.5rem;
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    svg {
+      width: 2rem;
+      height: 2rem;
+    }
+  }
+}
+.win {
+  background-image: linear-gradient(
+          to left,
+          var(--color-win07),
+          var(--color-win01)
+  );
+  border-left: 1px solid var(--color-win);
+  height: auto;
+  padding: 0.5rem;
+}
+.lose {
+  background-image: linear-gradient(
+          to left,
+          var(--color-lose07),
+          var(--color-lose01)
+  );
+  border-left: 1px solid var(--color-lose);
+  height: auto;
+  padding: 0.5rem;
+}
+.remake {
+  background-image: linear-gradient(
+          to left,
+          var(--color-remake07),
+          var(--color-remake01)
+  );
+  border-left: 1px solid var(--color-remake);
+  height: auto;
+  padding: 0.5rem;
+}
+.remake_btn {
+  background-color: var(--color-remake07);
+}
+
+.win_btn {
+  background-color: var(--color-win07);
+}
+.lose_btn {
+  background-color: var(--color-lose07);
+}
+.tooltip_style {
+  max-width: 400px;
+}
 </style>

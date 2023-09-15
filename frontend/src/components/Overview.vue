@@ -1,541 +1,223 @@
 <template>
   <div class="team">
-        <div class="team_overview team_blue_overview">
-            <div v-if="matchData.teams[0].win" class="team_overview_result">
-                <p class="win">Win</p>
-                <p>(Blue Team)</p>
-            </div>
-            <div v-else class="team_overview_result">
-                <p class="lose">Defeat</p>
-                <p>(Blue Team)</p>
-            </div>
+    <div v-for="(i, index) in matchData.teams">
+      <div :class="['team_overview', index === 0 ? 'team_blue_overview' : 'team_red_overview']">
+        <div class="team_overview_result">
+          <p v-if="matchData.teams[index].win=='Win'" class="win">Win</p>
+          <p v-else class="lose">Defeat</p>
+          <p>{{ index==0 ? "(Blue Team)" : "(Red Team)" }}</p>
+        </div>
 
-            <div class="team_overview_score">
-                <p>{{data.teamBlue.kills}} / {{data.teamBlue.deaths}} / {{data.teamBlue.assists}}</p>
+        <div class="team_overview_score">
+          <p v-if="index==0">{{data.teamBlue.kills}} / {{data.teamBlue.deaths}} / {{data.teamBlue.assists}}</p>
+          <p v-else>{{data.teamRed.kills}} / {{data.teamRed.deaths}} / {{data.teamRed.assists}}</p>
+        </div>
+
+        <div class="team_overview_obj">
+          <Popper placement="top" arrow hover>
+            <div class="team_overview_obj_item">
+              <img v-if="index==0" :src="store.getters.LocalAssetPrefix() + '/assets/images/other/tower-100.png'" alt="tower svg">
+              <img v-else :src="store.getters.LocalAssetPrefix() + '/assets/images/other/tower-200.png'" alt="tower svg">
+              <p>{{matchData.teams[index].towerKills}}</p>
             </div>
+            <template #content>
+              <p>Towers destroyed</p>
+            </template>
+          </Popper>
 
-            <div class="team_overview_obj">
-                <Popper placement="top" arrow hover>
-                    <div class="team_overview_obj_item">
-                        <img src="https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-match-history/global/default/tower-100.png" alt="tower svg">
-                        <p>{{matchData.teams[0].towerKills}}</p>
-                    </div>
-                    <template #content>
-                        <p>Towers destroyed</p>
-                    </template>
-                </Popper>
-
-                <Popper placement="top" arrow hover>
-                    <div class="team_overview_obj_item">
-                        <img src="https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-match-history/global/default/inhibitor-100.png" alt="inhibitor svg">
-                        <p>{{matchData.teams[0].inhibitorKills}}</p>
-                    </div>
-                    <template #content>
-                        <p>Inhibitors destroyed</p>
-                    </template>
-                </Popper>
+          <Popper placement="top" arrow hover>
+            <div class="team_overview_obj_item">
+              <img v-if="index==0" :src="store.getters.LocalAssetPrefix() + '/assets/images/other/inhibitor-100.png'" alt="inhibitor svg">
+              <img v-else :src="store.getters.LocalAssetPrefix() + '/assets/images/other/inhibitor-200.png'" alt="inhibitor svg">
+              <p>{{matchData.teams[index].inhibitorKills}}</p>
             </div>
+            <template #content>
+              <p>Inhibitors destroyed</p>
+            </template>
+          </Popper>
+        </div>
 
-            <div class="team_overview_monsters">
-                <Popper placement="top" arrow hover>
-                    <div class="team_overview_obj_item">
-                        <img src="https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-match-history/global/default/baron-100.png" alt="baron svg">
-                        <p>{{matchData.teams[0].baronKills}}</p>
-                    </div>
-                    <template #content>
-                        <p>Barons killed</p>
-                    </template>
-                </Popper>
-                <Popper placement="top" arrow hover>
-                    <div class="team_overview_obj_item">
-                        <img src="https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-match-history/global/default/herald-100.png" alt="herald svg">
-                        <p>{{matchData.teams[0].riftHeraldKills}}</p>
-                    </div>
-                    <template #content>
-                        <p>Heralds killed</p>
-                    </template>
-                </Popper>
-                <Popper placement="top" arrow hover>
-                    <div class="team_overview_obj_item">
-                        <img src="https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-match-history/global/default/dragon-100.png" alt="dragon svg">
-                        <p>{{matchData.teams[0].dragonKills}}</p>
-                    </div>
-                    <template #content>
-                        <p>Dragons killed</p>
-                    </template>
-                </Popper>
+        <div class="team_overview_monsters">
+          <Popper placement="top" arrow hover>
+            <div class="team_overview_obj_item">
+              <img v-if="index==0" :src="store.getters.LocalAssetPrefix() + '/assets/images/other/baron-100.png'" alt="baron svg">
+              <img v-else :src="store.getters.LocalAssetPrefix() + '/assets/images/other/baron-200.png'" alt="baron svg">
+              <p>{{matchData.teams[index].baronKills}}</p>
             </div>
+            <template #content>
+              <p>Barons killed</p>
+            </template>
+          </Popper>
+          <Popper placement="top" arrow hover>
+            <div class="team_overview_obj_item">
+              <img v-if="index==0" :src="store.getters.LocalAssetPrefix() + '/assets/images/other/herald-100.png'" alt="herald svg">
+              <img v-else :src="store.getters.LocalAssetPrefix() + '/assets/images/other/herald-200.png'" alt="herald svg">
+              <p>{{matchData.teams[index].riftHeraldKills}}</p>
+            </div>
+            <template #content>
+              <p>Heralds killed</p>
+            </template>
+          </Popper>
+          <Popper placement="top" arrow hover>
+            <div class="team_overview_obj_item">
+              <img v-if="index==0" :src="store.getters.LocalAssetPrefix() + '/assets/images/other/dragon-100.png'" alt="dragon svg">
+              <img v-else :src="store.getters.LocalAssetPrefix() + '/assets/images/other/dragon-200.png'" alt="dragon svg">
 
+              <p>{{matchData.teams[0].dragonKills}}</p>
+            </div>
+            <template #content>
+              <p>Dragons killed</p>
+            </template>
+          </Popper>
+        </div>
+
+        <Popper placement="top" arrow hover>
+          <div class="team_overview_gold">
+            <img :src="store.getters.LocalAssetPrefix() + '/assets/images/other/icon_gold.png'" alt="gold">
+            <p v-if="index==0">{{(data.teamBlue.gold/1000).toFixed(1)}}K</p>
+            <p v-else>{{(data.teamRed.gold/1000).toFixed(1)}}K</p>
+          </div>
+          <template #content>
+            <p>Total team gold</p>
+          </template>
+        </Popper>
+
+      </div>
+
+      <div :class="index == 0 ? 'team_blue' : 'team_red'">
+        <div v-for="(i, secIndex) in matchData.participants" :key="secIndex">
+          <div class="team_player" v-if="index == 0 && secIndex < 5 || index == 1 && secIndex >=5 ">
             <Popper placement="top" arrow hover>
-                <div class="team_overview_gold">
-                    <img src="https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-match-history/global/default/icon_gold.png" alt="gold">
-                    <p>{{(data.teamBlue.gold/1000).toFixed(1)}}K</p>
+              <div class="team_player_level">
+                <img :src="store.getters.LCUAPIPrefix(matchData.participants[secIndex].championOb.squarePortraitPath)" alt="lol stats img">
+                <p>{{matchData.participants[secIndex].stats.champLevel}}</p>
+              </div>
+              <template #content>
+                <div style="max-width: 400px">
+                  <p>{{matchData.participants[secIndex].championOb.name}}</p>
                 </div>
-                <template #content>
-                    <p>Total team gold</p>
-                </template>
+              </template>
             </Popper>
 
-        </div>
+            <div class="team_player_spells">
+              <Popper placement="top" arrow hover>
+                <img
+                    :src="store.getters.LCUAPIPrefix(data.spellDs[secIndex].iconPath)"
+                    alt="spell img"
+                />
 
-        <div class="team_blue">
-            <div v-for="(i,index) in matchData.participants" :key="index">
-                <div class="team_player" v-if="index < 5">
-
-                    <Popper placement="top" arrow hover>
-                        <div class="team_player_level">
-                            <img :src="'https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-icons/' + matchData.participants[index].championId + '.png'" alt="lol stats img">
-                            <p>{{matchData.participants[index].stats.champLevel}}</p>
-                        </div>
-                        <template #content>
-                            <div style="max-width: 400px">
-                                <p>{{matchData.participants[index].championOb.name}}</p>
-                            </div>
-                        </template>
-                    </Popper>
-
-<!--                    <Popper placement="bottom" arrow>-->
-<!--                        <button class="team_player_runeBtn">Runes</button>-->
-
-<!--                        <template #content>-->
-<!--                            <div class="team_player_runes" style="max-width:550px">-->
-<!--                                <div class="team_player_runes_items">-->
-<!--                                    <div style="" v-for="(j,poz) in runes.allPerksPrimary[index]" :key="j">-->
-<!--                                        <div class="team_player_rune_box">-->
-<!--                                            <img-->
-<!--                                                :src="-->
-<!--                                                    'https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/' +-->
-<!--                                                    runes.allPerksPrimary[index][poz][1]-->
-<!--                                                "-->
-<!--                                                alt="runes img"-->
-<!--                                                class="match_details_spells_runePrimary"-->
-<!--                                            />-->
-<!--                                            <div class="team_player_rune_box_name">-->
-<!--                                                <p style="font-weight:bold">{{runes.allPerksPrimary[index][poz][0]}}</p>-->
-<!--                                                <p v-html="runes.allPerksPrimary[index][poz][2]" class="team_player_rune_box_desc"></p>-->
-<!--                                            </div>-->
-<!--                                        </div>-->
-<!--                                    </div>-->
-<!--                                </div>-->
-
-<!--                                <div class="team_player_runes_items">-->
-<!--                                    <div style="" v-for="(j,poz) in runes.allPerksSec[index]" :key="j">-->
-<!--                                        <div class="team_player_rune_box">-->
-<!--                                            <img-->
-<!--                                                :src="-->
-<!--                                                    'https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/' +-->
-<!--                                                    runes.allPerksSec[index][poz][1]-->
-<!--                                                "-->
-<!--                                                alt="runes img"-->
-<!--                                                class="match_details_spells_runePrimary"-->
-<!--                                            />-->
-<!--                                            <div class="team_player_rune_box_name">-->
-<!--                                                <p style="font-weight:bold">{{runes.allPerksSec[index][poz][0]}}</p>-->
-<!--                                                <p v-html="runes.allPerksSec[index][poz][2]" class="team_player_rune_box_desc"></p>-->
-<!--                                            </div>-->
-<!--                                        </div>-->
-<!--                                    </div>-->
-<!--                                </div>-->
-
-<!--                                <div class="team_player_statsRunes">-->
-<!--                                    <div v-for="(k,poz1) in runes.runeStatsJson" :key="k">-->
-<!--                                        <div v-if="matchData.participants[index].perks.statPerks.offense == runes.runeStatsJson[poz1].id">-->
-<!--                                            <img :src="runes.runeStatsJson[poz1].link" alt="stats runes">-->
-<!--                                        </div>-->
-
-<!--                                    </div>-->
-<!--                                    <div v-for="(k,poz1) in runes.runeStatsJson" :key="k">-->
-<!--                                        <div v-if="matchData.participants[index].perks.statPerks.flex == runes.runeStatsJson[poz1].id">-->
-<!--                                            <img :src="runes.runeStatsJson[poz1].link" alt="stats runes">-->
-<!--                                        </div>-->
-<!--                                    </div>-->
-<!--                                    <div v-for="(k,poz1) in runes.runeStatsJson" :key="k">-->
-<!--                                        <div v-if="matchData.participants[index].perks.statPerks.defense == runes.runeStatsJson[poz1].id">-->
-<!--                                            <img :src="runes.runeStatsJson[poz1].link" alt="stats runes">-->
-<!--                                        </div>-->
-<!--                                    </div>-->
-<!--                                </div>-->
-
-<!--                            </div>-->
-<!--                        </template>-->
-<!--                    </Popper>-->
-
-                    <div class="team_player_spells" v-if="data.spellDs[index] && data.spellFs[index]">
-                        <Popper placement="top" arrow hover>
-                            <img
-                            :src="store.getters.LCUAPIPrefix() + data.spellDs[index].iconPath"
-                            alt="spell img"
-                            />
-
-                            <template #content>
-                            <div style="max-width: 400px">
-                                <p class="spell_name">{{ data.spellDs[index].name }}</p>
-                                {{ data.spellDs[index].description }}
-                            </div>
-                            </template>
-                        </Popper>
-
-                        <Popper placement="top" arrow hover>
-                            <img
-                              :src="store.getters.LCUAPIPrefix() + data.spellFs[index].iconPath"
-                              alt="spell img"
-                            />
-
-                            <template #content>
-                            <div style="max-width: 400px">
-                                <p class="spell_name">{{ data.spellFs[index].name }}</p>
-                                {{ data.spellFs[index].description }}
-                            </div>
-                            </template>
-                        </Popper>
-                    </div>
-
-                    <div class="team_player_name">
-                        <a :href="'/' + matchData.participantIdentities[index].player.summonerName" target="_blank">
-                            <p>{{matchData.participantIdentities[index].player.summonerName}}</p>
-                        </a>
-                    </div>
-
-
-
-                    <div class="team_player_score">
-                        <p>{{((matchData.participants[index].stats.kills + matchData.participants[index].stats.assists)/matchData.participants[index].stats.deaths).toFixed(1)}} KDA</p>
-                        <div class="team_player_score_kp">
-                            <p>{{matchData.participants[index].stats.kills}}/{{matchData.participants[index].stats.deaths}}/{{matchData.participants[index].stats.assists}}</p>
-                            <p>({{(((matchData.participants[index].stats.kills + matchData.participants[index].stats.assists)/data.teamBlue.kills)*100).toFixed(0)}}% KP)</p>
-                        </div>
-                    </div>
-
-                    <div class="team_player_cs">
-                        <p>{{matchData.participants[index].stats.totalMinionsKilled + matchData.participants[index].stats.neutralMinionsKilled}} CS</p>
-                        <p>{{((matchData.participants[index].stats.totalMinionsKilled + matchData.participants[index].stats.neutralMinionsKilled) / (matchData.gameDurationInt / 60)).toFixed(1)}}/min</p>
-                    </div>
-
-                    <div class="team_player_dmg">
-                        <p><span>{{((matchData.participants[index].stats.totalDamageDealtToChampions)/1000).toFixed(3)}}</span> <span>DMG</span></p>
-                    </div>
-
-                    <div class="team_player_items">
-                        <div v-for="j in ['item0Ob','item1Ob','item2Ob','item3Ob','item4Ob','item5Ob','item6Ob',]" :key="j">
-                            <div v-if="(matchData.participants[index].stats as any)[j].id == 0">
-                                <Popper placement="top" arrow hover>
-                                <img
-                                    src="https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/assets/items/icons2d/gp_ui_placeholder.png"
-                                    alt="placeholder"
-                                />
-
-                                <template #content>
-                                    <p style="max-width: 400px">No item {{(matchData.participants[index].stats as any)[j].id}}</p>
-                                </template>
-                                </Popper>
-                            </div>
-                            <div v-else>
-                                <Popper placement="top" arrow hover>
-                                  <img
-                                      :src="store.getters.LCUAPIPrefix() + (matchData.participants[index].stats as any)[j].iconPath"
-                                      alt="item"
-                                  />
-                                <template #content>
-                                    <div style="text-align: left">
-                                    <p class="spell_name">
-                                        {{ (matchData.participants[index].stats as any)[j].name }}
-                                    </p>
-                                    <p
-                                        style="max-width: 400px"
-                                        v-html="(matchData.participants[index].stats as any)[j].description"
-                                    ></p>
-                                    <p class="spell_name">
-                                        Cost: {{ (matchData.participants[index].stats as any)[j].priceTotal }}
-                                    </p>
-                                    </div>
-                                </template>
-                                </Popper>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="team_overview team_red_overview">
-            <div v-if="matchData.teams[1].win" class="team_overview_result">
-                <p class="win">Win</p>
-                <p>(Red Team)</p>
-            </div>
-            <div v-else class="team_overview_result">
-                <p class="lose">Defeat</p>
-                <p>(Red Team)</p>
-            </div>
-
-            <div class="team_overview_score">
-                <p>{{data.teamRed.kills}} / {{data.teamRed.deaths}} / {{data.teamRed.assists}}</p>
-            </div>
-
-            <div class="team_overview_obj">
-                <Popper placement="top" arrow hover>
-                    <div class="team_overview_obj_item">
-                        <img src="https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-match-history/global/default/tower-200.png" alt="tower svg">
-                        <p>{{matchData.teams[1].towerKills}}</p>
-                    </div>
-                    <template #content>
-                        <p>Towers destroyed</p>
-                    </template>
-                </Popper>
-
-                <Popper placement="top" arrow hover>
-                    <div class="team_overview_obj_item">
-                        <img src="https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-match-history/global/default/inhibitor-200.png" alt="inhibitor svg">
-                        <p>{{matchData.teams[1].inhibitorKills}}</p>
-                    </div>
-                    <template #content>
-                        <p>Inhibitors destroyed</p>
-                    </template>
-                </Popper>
-            </div>
-
-            <div class="team_overview_monsters">
-                <Popper placement="top" arrow hover>
-                    <div class="team_overview_obj_item">
-                        <img src="https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-match-history/global/default/baron-200.png" alt="baron svg">
-                        <p>{{matchData.teams[1].baronKills}}</p>
-                    </div>
-                    <template #content>
-                        <p>Barons killed</p>
-                    </template>
-                </Popper>
-                <Popper placement="top" arrow hover>
-                    <div class="team_overview_obj_item">
-                        <img src="https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-match-history/global/default/herald-200.png" alt="herald svg">
-                        <p>{{matchData.teams[1].riftHeraldKills}}</p>
-                    </div>
-                    <template #content>
-                        <p>Heralds killed</p>
-                    </template>
-                </Popper>
-                <Popper placement="top" arrow hover>
-                    <div class="team_overview_obj_item">
-                        <img src="https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-match-history/global/default/dragon-200.png" alt="dragon svg">
-                        <p>{{matchData.teams[1].dragonKills}}</p>
-                    </div>
-                    <template #content>
-                        <p>Dragons killed</p>
-                    </template>
-                </Popper>
-            </div>
-
-            <Popper placement="top" arrow hover>
-                <div class="team_overview_gold">
-                    <img src="https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-match-history/global/default/icon_gold.png" alt="gold">
-                    <p>{{(data.teamRed.gold/1000).toFixed(1)}}K</p>
-                </div>
                 <template #content>
-                    <p>Total team gold</p>
+                  <div style="max-width: 400px">
+                    <p class="spell_name">{{ data.spellDs[secIndex].name }}</p>
+                    {{ data.spellDs[secIndex].description }}
+                  </div>
                 </template>
-            </Popper>
-        </div>
-        <div class="team_red">
-            <div v-for="(i,index) in matchData.participants" :key="index">
-                <div class="team_player" v-if="index >= 5">
-                    <Popper placement="top" arrow hover>
-                        <div class="team_player_level">
-                            <img :src="store.getters.LCUAPIPrefix() + matchData.participants[index].championOb.squarePortraitPath" alt="lol stats img">
-                            <p>{{matchData.participants[index].stats.champLevel}}</p>
-                        </div>
-                        <template #content>
-                            <div style="max-width: 400px">
-                                <p>{{matchData.participants[index].championOb.name}}</p>
-                            </div>
-                        </template>
-                    </Popper>
+              </Popper>
 
-                    
-<!--                    <Popper placement="bottom" arrow>-->
-<!--                        <button class="team_player_runeBtn">Runes</button>-->
+              <Popper placement="top" arrow hover>
+                <img
+                    :src="store.getters.LCUAPIPrefix(data.spellFs[secIndex].iconPath)"
+                    alt="spell img"
+                />
 
-<!--                        <template #content>-->
-<!--                            <div class="team_player_runes" style="max-width:550px">-->
-<!--                                <div class="team_player_runes_items">-->
-<!--                                    <div style="" v-for="(j,poz) in runes.allPerksPrimary[index]" :key="j">-->
-<!--                                        <div class="team_player_rune_box">-->
-<!--                                            <img-->
-<!--                                                :src="-->
-<!--                                                    'https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/' +-->
-<!--                                                    runes.allPerksPrimary[index][poz][1]-->
-<!--                                                "-->
-<!--                                                alt="runes img"-->
-<!--                                                class="match_details_spells_runePrimary"-->
-<!--                                            />-->
-<!--                                            <div class="team_player_rune_box_name">-->
-<!--                                                <p style="font-weight:bold">{{runes.allPerksPrimary[index][poz][0]}}</p>-->
-<!--                                                <p v-html="runes.allPerksPrimary[index][poz][2]" class="team_player_rune_box_desc"></p>-->
-<!--                                            </div>-->
-<!--                                        </div>-->
-<!--                                    </div>-->
-<!--                                </div>-->
+                <template #content>
+                  <div style="max-width: 400px">
+                    <p class="spell_name">{{ data.spellFs[secIndex].name }}</p>
+                    {{ data.spellFs[secIndex].description }}
+                  </div>
+                </template>
+              </Popper>
+            </div>
 
-<!--                                <div class="team_player_runes_items">-->
-<!--                                    <div style="" v-for="(j,poz) in runes.allPerksSec[index]" :key="j">-->
-<!--                                        <div class="team_player_rune_box">-->
-<!--                                            <img-->
-<!--                                                :src="-->
-<!--                                                    'https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/' +-->
-<!--                                                    runes.allPerksSec[index][poz][1]-->
-<!--                                                "-->
-<!--                                                alt="runes img"-->
-<!--                                                class="match_details_spells_runePrimary"-->
-<!--                                            />-->
-<!--                                            <div class="team_player_rune_box_name">-->
-<!--                                                <p style="font-weight:bold">{{runes.allPerksSec[index][poz][0]}}</p>-->
-<!--                                                <p v-html="runes.allPerksSec[index][poz][2]" class="team_player_rune_box_desc"></p>-->
-<!--                                            </div>-->
-<!--                                        </div>-->
-<!--                                    </div>-->
-<!--                                </div>-->
+            <div class="team_player_name">
+              <a :href="'/' + matchData.participantIdentities[secIndex].player.summonerName" target="_blank">
+                <p>{{matchData.participantIdentities[secIndex].player.summonerName}}</p>
+              </a>
+            </div>
 
-<!--                                <div class="team_player_statsRunes">-->
-<!--                                    <div v-for="(k,poz1) in runes.runeStatsJson" :key="k">-->
-<!--                                        <div v-if="matchData.participants[index].perks.statPerks.offense == runes.runeStatsJson[poz1].id">-->
-<!--                                            <img :src="runes.runeStatsJson[poz1].link" alt="stats runes">-->
-<!--                                        </div>-->
+            <div class="team_player_score">
+              <p>{{((matchData.participants[secIndex].stats.kills + matchData.participants[secIndex].stats.assists)/matchData.participants[secIndex].stats.deaths).toFixed(1)}} KDA</p>
+              <div class="team_player_score_kp">
+                <p>{{matchData.participants[secIndex].stats.kills}}/{{matchData.participants[secIndex].stats.deaths}}/{{matchData.participants[secIndex].stats.assists}}</p>
+                <p>({{(((matchData.participants[secIndex].stats.kills + matchData.participants[secIndex].stats.assists)/data.teamBlue.kills)*100).toFixed(0)}}% KP)</p>
+              </div>
+            </div>
 
-<!--                                    </div>-->
-<!--                                    <div v-for="(k,poz1) in runes.runeStatsJson" :key="k">-->
-<!--                                        <div v-if="matchData.participants[index].perks.statPerks.flex == runes.runeStatsJson[poz1].id">-->
-<!--                                            <img :src="runes.runeStatsJson[poz1].link" alt="stats runes">-->
-<!--                                        </div>-->
-<!--                                    </div>-->
-<!--                                    <div v-for="(k,poz1) in runes.runeStatsJson" :key="k">-->
-<!--                                        <div v-if="matchData.participants[index].perks.statPerks.defense == runes.runeStatsJson[poz1].id">-->
-<!--                                            <img :src="runes.runeStatsJson[poz1].link" alt="stats runes">-->
-<!--                                        </div>-->
-<!--                                    </div>-->
-<!--                                </div>-->
+            <div class="team_player_cs">
+              <p>{{matchData.participants[secIndex].stats.totalMinionsKilled + matchData.participants[secIndex].stats.neutralMinionsKilled}} CS</p>
+              <p>{{((matchData.participants[secIndex].stats.totalMinionsKilled + matchData.participants[secIndex].stats.neutralMinionsKilled) / (matchData.gameDurationInt / 60)).toFixed(1)}}/min</p>
+            </div>
 
-<!--                            </div>-->
-<!--                        </template>-->
-<!--                    </Popper>-->
+            <div class="team_player_dmg">
+              <p><span>{{((matchData.participants[secIndex].stats.totalDamageDealtToChampions)/1000).toFixed(3)}}</span> <span>DMG</span></p>
+            </div>
 
-                    <div class="team_player_spells"  v-if="data.spellDs[index] && data.spellFs[index]">
-                        <Popper placement="top" arrow hover>
-                            <img
-                              :src="store.getters.LCUAPIPrefix() + data.spellDs[index].iconPath"
-                              alt="spell img"
-                            />
+            <div class="team_player_items">
+              <div v-for="j in ['item0Ob','item1Ob','item2Ob','item3Ob','item4Ob','item5Ob','item6Ob',]" :key="j">
+                <div v-if="(matchData.participants[secIndex].stats as any)[j].id == 0">
+                  <Popper placement="top" arrow hover>
+                    <img
+                        :src="store.getters.LocalAssetPrefix() + '/assets/images/other/gp_ui_placeholder.png'"
+                        alt="placeholder"
+                    />
 
-                            <template #content>
-                            <div style="max-width: 400px">
-                                <p class="spell_name">{{ data.spellDs[index].name }}</p>
-                                {{ data.spellDs[index].description }}
-                            </div>
-                            </template>
-                        </Popper>
-
-                        <Popper placement="top" arrow hover>
-                            <img
-                              :src="store.getters.LCUAPIPrefix() + data.spellFs[index].iconPath"
-                              alt="spell img"
-                            />
-
-                            <template #content>
-                            <div style="max-width: 400px">
-                                <p class="spell_name">{{ data.spellFs[index].name }}</p>
-                                {{ data.spellFs[index].description }}
-                            </div>
-                            </template>
-                        </Popper>
-                    </div>
-
-                    <div class="team_player_name">
-                        <a :href="'/' + matchData.participantIdentities[index].player.summonerName" target="_blank">
-                        <p>{{matchData.participantIdentities[index].player.summonerName}}</p>
-                        </a>
-                    </div>
-
-
-                    <div class="team_player_score">
-                        <p>{{((matchData.participants[index].stats.kills + matchData.participants[index].stats.assists)/matchData.participants[index].stats.deaths).toFixed(1)}} KDA</p>
-                        <div class="team_player_score_kp">
-                            <p>{{matchData.participants[index].stats.kills}}/{{matchData.participants[index].stats.deaths}}/{{matchData.participants[index].stats.assists}}</p>
-                            <p>({{(((matchData.participants[index].stats.kills + matchData.participants[index].stats.assists)/data.teamRed.kills)*100).toFixed(0)}}% KP)</p>
-                        </div>
-                    </div>
-
-                    <div class="team_player_cs">
-                        <p>{{matchData.participants[index].stats.totalMinionsKilled + matchData.participants[index].stats.neutralMinionsKilled}} CS</p>
-                        <p>{{((matchData.participants[index].stats.totalMinionsKilled + matchData.participants[index].stats.neutralMinionsKilled) / (matchData.gameDurationInt / 60)).toFixed(1)}}/min</p>
-                    </div>
-
-                    <div class="team_player_dmg">
-                        <p><span>{{((matchData.participants[index].stats.totalDamageDealtToChampions)/1000).toFixed(3)}}</span> <span>DMG</span></p>
-                    </div>
-
-                    <div class="team_player_items">
-                        <div v-for="j in ['item0Ob','item1Ob','item2Ob','item3Ob','item4Ob','item5Ob','item6Ob',]" :key="j">
-                            <div v-if="(matchData.participants[index].stats as any)[j].id == 0">
-                                <Popper placement="top" arrow hover>
-                                  <img
-                                      src="https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/assets/items/icons2d/gp_ui_placeholder.png"
-                                      alt="placeholder"
-                                  />
-
-                                <template #content>
-                                    <p style="max-width: 400px">No item</p>
-                                </template>
-                                </Popper>
-                            </div>
-
-                            <div v-else>
-                                <Popper placement="top" arrow hover>
-                                  <img
-                                      :src="store.getters.LCUAPIPrefix() + (matchData.participants[index].stats as any)[j].iconPath"
-                                      alt="item"
-                                  />
-                                <template #content>
-                                    <div style="text-align: left">
-                                    <p class="spell_name">
-                                        {{(matchData.participants[index].stats as any)[j].name}}
-                                    </p>
-                                    <p
-                                        style="max-width: 400px"
-                                        v-html="(matchData.participants[index].stats as any)[j].description"
-                                    ></p>
-                                    <p class="spell_name">
-                                        Cost: {{(matchData.participants[index].stats as any)[j].priceTotal}}
-                                    </p>
-                                    </div>
-                                </template>
-                                </Popper>
-                            </div>
-                        </div>
-                    </div>
+                    <template #content>
+                      <p style="max-width: 400px">No item {{(matchData.participants[secIndex].stats as any)[j].id}}</p>
+                    </template>
+                  </Popper>
                 </div>
+                <div v-else>
+                  <Popper placement="top" arrow hover>
+                    <img
+                        :src="store.getters.LCUAPIPrefix((matchData.participants[secIndex].stats as any)[j].iconPath)"
+                        alt="item"
+                    />
+                    <template #content>
+                      <div style="text-align: left">
+                        <p class="spell_name">
+                          {{ (matchData.participants[secIndex].stats as any)[j].name }}
+                        </p>
+                        <p
+                            style="max-width: 400px"
+                            v-html="(matchData.participants[secIndex].stats as any)[j].description"
+                        ></p>
+                        <p class="spell_name">
+                          Cost: {{ (matchData.participants[secIndex].stats as any)[j].priceTotal }}
+                        </p>
+                      </div>
+                    </template>
+                  </Popper>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="team_bans">
+        <div>
+            <div v-for="(i,index) in matchData.teams[0].bans" :key="index">
+                <img style="filter: grayscale(100%);" :src="store.getters.LCUAPIPrefix(matchData.teams[0].bans[index].championOb.squarePortraitPath)" alt="champ img"/>
             </div>
         </div>
 
-        <div class="team_bans">
-            <div>
-                <div v-for="(i,index) in matchData.teams[0].bans" :key="index">
-                    <img style="filter: grayscale(100%);" :src="store.getters.LCUAPIPrefix() + matchData.teams[0].bans[index].championOb.squarePortraitPath" alt="champ img"/>
-                </div>
-            </div>
+        <p>: Bans :</p>
 
-            <p>: Bans :</p>
-
-            <div>
-                <div v-for="(i, index) in matchData.teams[1].bans" :key="index">
-                    <img style="filter: grayscale(100%);" :src="store.getters.LCUAPIPrefix() + matchData.teams[1].bans[index].championOb.squarePortraitPath" alt="champ img"/>
-                </div>
+        <div>
+            <div v-for="(i, index) in matchData.teams[1].bans" :key="index">
+                <img style="filter: grayscale(100%);" :src="store.getters.LCUAPIPrefix(matchData.teams[1].bans[index].championOb.squarePortraitPath)" alt="champ img"/>
             </div>
         </div>
+    </div>
 
   </div>
 </template>
 
 <script setup lang="ts">
-import Popper from "vue3-popper";
-import {onMounted, reactive} from "vue";
-import {model} from "../../wailsjs/go/models";
-import {useStore} from "vuex";
+  import Popper from "vue3-popper";
+  import {model} from "../../wailsjs/go/models";
+  import {useStore} from "vuex";
 
   const props = defineProps<{
     data: model.Overview,
@@ -543,67 +225,6 @@ import {useStore} from "vuex";
   }>()
 
   const store = useStore();
-
-  // onMounted(()=> {
-  //   //getRunes();
-  // })
-
-
-        // const runes = reactive({
-        //     runeStatsJson: [
-        //         {id: 5002, link: 'https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/perk-images/statmods/statmodsarmoricon.png'}, //armura
-        //         {id: 5003, link: 'https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/perk-images/statmods/statmodsmagicresicon.png'}, // magic resist
-        //         {id: 5005, link: 'https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/perk-images/statmods/statmodsattackspeedicon.png'}, //atck speed
-        //         {id: 5007, link: 'https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/perk-images/statmods/statmodscdrscalingicon.png'}, //CR
-        //         {id: 5008, link: 'https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/perk-images/statmods/statmodsadaptiveforceicon.png'}, //damage
-        //         {id: 5001, link: 'https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/perk-images/statmods/statmodshealthscalingicon.png'}, //heal
-        //     ],
-        //     perksPrimary:[], // structura ex: [[['electrocute','icon','descriere'],['taste od blood','icon','descriere']]]
-        //     perksSec:[],
-        //     allPerksPrimary: [],
-        //     allPerksSec: [],
-        // });
-
-
-        // function getRunes() {
-        //     // console.log(props.runesData);
-        //
-        //     for(let i = 0; i < props.matchData.participants.length; i++) {
-        //         for(let j = 0; j < props.matchData.participants[i].perks.styles[0].selections.length; j++) {
-        //             for(let g = 0; g < props.runesData.length; g++) {
-        //                 for(let h = 0; h < props.runesData[g].slots.length; h++) {
-        //                     for(let k = 0; k < props.runesData[g].slots[h].runes.length; k++) {
-        //                         if(props.runesData[g].slots[h].runes[k].id == props.matchData.participants[i].perks.styles[0].selections[j].perk) {
-        //                             runes.perksPrimary.push([props.runesData[g].slots[h].runes[k].name,(props.runesData[g].slots[h].runes[k].icon).toLowerCase(),props.runesData[g].slots[h].runes[k].shortDesc]);
-        //                         }
-        //                     }
-        //                 }
-        //             }
-        //         }
-        //
-        //         for(let j = 0; j < props.matchData.participants[i].perks.styles[1].selections.length; j++) {
-        //             for(let g = 0; g < props.runesData.length; g++) {
-        //                 for(let h = 0; h < props.runesData[g].slots.length; h++) {
-        //                     for(let k = 0; k < props.runesData[g].slots[h].runes.length; k++) {
-        //                         if(props.runesData[g].slots[h].runes[k].id == props.matchData.participants[i].perks.styles[1].selections[j].perk) {
-        //                             runes.perksSec.push([props.runesData[g].slots[h].runes[k].name,(props.runesData[g].slots[h].runes[k].icon).toLowerCase(),props.runesData[g].slots[h].runes[k].shortDesc]);
-        //                         }
-        //                     }
-        //                 }
-        //             }
-        //         }
-        //     }
-        //
-        //     for(let i = 0; i < runes.perksPrimary.length; i+=4) {
-        //         runes.allPerksPrimary.push([runes.perksPrimary[i],runes.perksPrimary[i+1],runes.perksPrimary[i+2],runes.perksPrimary[i+3]])
-        //     }
-        //
-        //     for(let i = 0; i < runes.perksSec.length; i+=2) {
-        //         runes.allPerksSec.push([runes.perksSec[i],runes.perksSec[i+1]]);
-        //     }
-        //
-        // }
-
 
 </script>
 
@@ -629,9 +250,7 @@ import {useStore} from "vuex";
     grid-template-columns: 1fr;
     gap: 1rem;
     width: 100%;
-    @media screen and (max-width: 500px) {
-        font-size: 1rem;
-    }
+
     // white-space: nowrap;
         // overflow-x: scroll;
         // overflow-y: hidden;
@@ -641,19 +260,11 @@ import {useStore} from "vuex";
         align-items: center;
         justify-content: space-between;
         font-weight: bold;
-        @media screen and (max-width: 500px) {
-            font-size: 1rem;
-        }
+
         &_result {
             display: flex;
             align-items: center;
             font-size: 1.4rem;
-            @media screen and (max-width: 500px) {
-                font-size: 1rem;
-            }
-            @media screen and (max-width: 400px) {
-                flex-direction: column;
-            }
         }
 
         &_obj {
@@ -678,10 +289,6 @@ import {useStore} from "vuex";
             width: 2rem !important;
             height: 2rem !important;
 
-            @media screen and (max-width: 500px) {
-                width: 1.5rem !important;
-                height: 1.5rem !important;
-            }
         }
 
         &_gold {
@@ -707,13 +314,6 @@ import {useStore} from "vuex";
             display: flex;
             &>*:not(:last-child) {
                 margin-right: .5rem;
-            }
-        }
-
-        @media screen and (max-width: 500px) {
-            img {
-                width: 2.5rem !important;
-                height: 2.5rem !important;
             }
         }
     }
@@ -751,20 +351,7 @@ import {useStore} from "vuex";
         padding-top: .5rem;
         width: 100%;
 
-        @media screen and (max-width: 600px) {
-            grid-template-columns: min-content min-content min-content 13% 1fr 1fr 1fr;
-            row-gap: .5rem;
-        }
-        @media screen and (max-width: 500px) {
-            grid-template-columns: min-content min-content min-content 18% 1fr 1fr 1fr;
-        }
-        @media screen and (max-width: 400px) {
-            grid-template-columns: min-content min-content min-content 18% 1fr 1fr 1fr;
-        }
 
-        // &>div {
-        //     display: flex !important;
-        // }
         transition: all .2s;
         border-bottom: 1px solid rgba(0,0,0,.1);
 
@@ -812,14 +399,6 @@ import {useStore} from "vuex";
         &_dmg {
             white-space: nowrap;
 
-            p{
-                @media screen and (max-width: 400px) {
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                    justify-content: center;
-                }
-            }
         }
 
         &_score {
@@ -858,14 +437,6 @@ import {useStore} from "vuex";
                height: 2.7rem !important;
            }
 
-            @media screen and (max-width: 650px) {
-                grid-template-columns: repeat(4,1fr);
-            }
-            @media screen and (max-width: 600px) {
-               grid-template-columns: repeat(7,1fr);
-               grid-column: 1/-1;
-               justify-self: flex-start;
-           }
         }
 
         &_spells {
@@ -911,9 +482,6 @@ import {useStore} from "vuex";
             padding: .4rem;
             cursor: pointer;
 
-            @media screen and (max-width: 800px) {
-                font-size: 1.2rem;
-            }
  
         }
     }

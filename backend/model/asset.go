@@ -7,6 +7,7 @@ type Assets struct {
 	Items     map[int]Item      `json:"items"`
 	Spells    map[int]Spell     `json:"spells"`
 	PerkStyle map[int]PerkStyle `json:"perkStyles"`
+	Tier      map[string]Tier   `json:"tier"`
 }
 
 func (a *Assets) GetChampionById(id int) Champion {
@@ -97,4 +98,10 @@ type Item struct {
 	Price                    int      `json:"price"`
 	PriceTotal               int      `json:"priceTotal"`
 	IconPath                 string   `json:"iconPath"`
+}
+
+type Tier struct {
+	IconPath string `json:"iconPath"`
+	Name     string `json:"name"`
+	Division string `json:"division"`
 }

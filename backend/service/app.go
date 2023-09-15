@@ -3,7 +3,9 @@ package service
 import (
 	"hidden-record-assistant/backend/model"
 	"hidden-record-assistant/backend/model/conv"
+	"hidden-record-assistant/backend/module/task"
 	"hidden-record-assistant/backend/service/support"
+	"time"
 )
 
 type App struct {
@@ -48,30 +50,48 @@ func (a *App) getSummoner(data *model.Summoner) (err error) {
 	// 这些任务都是需要等待AccountData的，并且是互相独立的，所以可以并发执行
 	errChan, num := support.ExecuteTaskConcurrently(
 		func() (err error) {
+			defer task.TimeCost("GetRank")()
 			var rank model.Rank
 			rank, err = a.SummonerInquirer.GetRank(data.AccountData.Puuid)
 			if err != nil {
 				return
 			}
 			data.RankSolo, data.RankFlex = rank.QueueMap.RANKEDSOLO5X5, rank.QueueMap.RANKEDFLEXSR
+			data.RankSolo.TierOb = a.AssetsManager.Tier[data.RankSolo.Tier]
+			data.RankFlex.TierOb = a.AssetsManager.Tier[data.RankFlex.Tier]
 			return
 		},
 		func() (err error) {
-			matchHistory, err := a.GetMatchHistory(data.AccountData.Puuid, 0, 10)
+			defer task.TimeCost("GetMatchHistory")()
+			matchHistory, err := a.GetMatchHistory(data.AccountData.Puuid, 0, 19)
 			if err != nil {
 				return
 			}
-			data.MatchRecords = make([]model.MatchData, matchHistory.Games.GameCount)
+			MatchRecords := make([]model.MatchData, matchHistory.Games.GameCount)
 			data.DisplayMatchRecords = make([]model.DisplayMatch, matchHistory.Games.GameCount)
+			var (
+				NMValueInFiveHours  = 0
+				CntInFiveHours      = 0
+				NMValueOutFiveHours = 0
+				CntOutFiveHours     = 0
+			)
+
 			var tasks []func() error
 			for i := range matchHistory.Games.Games {
 				index := i
 				tasks = append(tasks, func() (err error) {
-					data.MatchRecords[index], err = a.GetMatchDetails(matchHistory.Games.Games[index].GameId)
+					MatchRecords[index], err = a.GetMatchDetails(matchHistory.Games.Games[index].GameId)
 					if err != nil {
 						return
 					}
-					data.DisplayMatchRecords[index] = conv.GetDisplayMatchFromMatchData(data.AccountData.Puuid, data.MatchRecords[index], a.AssetsManager)
+					data.DisplayMatchRecords[index] = conv.GetDisplayMatchFromMatchData(data.AccountData.Puuid, MatchRecords[index], a.AssetsManager)
+					if time.Now().UnixMilli()-int64(MatchRecords[index].GameCreation) <= 5*60*60*1000 {
+						NMValueInFiveHours += data.DisplayMatchRecords[index].NMValue
+						CntInFiveHours++
+					} else {
+						NMValueOutFiveHours += data.DisplayMatchRecords[index].NMValue
+						CntOutFiveHours++
+					}
 					return
 				})
 			}
@@ -82,7 +102,12 @@ func (a *App) getSummoner(data *model.Summoner) (err error) {
 					return
 				}
 			}
-			data.RecentMatchStatistic = conv.GetStatisticFromMatches(data.AccountData.Puuid, data.MatchRecords)
+			data.RecentMatchStatistic = conv.GetStatisticFromMatches(data.AccountData.Puuid, MatchRecords)
+			if CntInFiveHours != 0 {
+				data.RecentMatchStatistic.NMValue = (NMValueInFiveHours*8/CntInFiveHours + NMValueOutFiveHours*2/CntOutFiveHours) / 10
+			} else {
+				data.RecentMatchStatistic.NMValue = NMValueOutFiveHours / CntOutFiveHours
+			}
 			return
 		},
 	)

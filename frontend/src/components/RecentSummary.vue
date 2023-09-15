@@ -1,13 +1,13 @@
 <template>
   <div class="recent">
     <div class="recent_title">
-      <h4>RECENT SUMMARY</h4> 
-      <p>(last {{10}} games):</p>
+      <h4>近期对局情况</h4>
+      <p>(最近 {{10}} 场游戏):</p>
     </div>
 
     <div class="recent_summary" style="padding:.5rem">
       <div class="recent_summary_total">
-        <p>{{ data.wins }}W {{ data.defeats }}L
+        <p>{{ data.wins }}胜 {{ data.defeats }}负
           ({{ (data.wins * 100 / (data.wins + data.defeats)).toFixed(0) }}%)</p>
         <pie-chart :data="[['Wins', data.wins], ['Defeats', data.defeats]]" :colors="['rgb(32,178,170)', 'rgb(240, 128, 128)']" width="100px" height="100px" :donut="true" :legend="false"></pie-chart>
         <div>
@@ -19,15 +19,15 @@
       </div>
 
       <div class="recent_summary_lane">
-        <p>Preferred Position:</p>
+        <p>近期常用位置:</p>
         <div class="recent_summary_lane_name">
           <img :src="store.getters.LocalAssetPrefix() + '/assets/images/lane/' + data.preferablyLane + '.png'" class="lane-icon" alt="lane">
-          <p v-if="data.preferablyLane == 'utility'">Support
+          <p v-if="data.preferablyLane == 'utility'">{{data.preferablyLane}}
             ({{ (data.preferablyLaneGames * 100 / (data.wins + data.defeats)).toFixed(0) }}%)</p>
           <p v-else>{{ data.preferablyLane }}
             ({{ (data.preferablyLaneGames * 100 / (data.wins + data.defeats)).toFixed(0) }}%)</p>
         </div>
-        <p>{{ data.wins_preferablyLane }}W {{ data.defeats_preferablyLane }}L
+        <p>{{ data.wins_preferablyLane }}胜 {{ data.defeats_preferablyLane }}负
           ({{ (data.wins_preferablyLane * 100 / (data.preferablyLaneGames)).toFixed(1) }}%)</p>
         <p>{{ (data.kills_preferablyLane / data.preferablyLaneGames).toFixed(1) }} /
           {{ (data.deaths_preferablyLane / data.preferablyLaneGames).toFixed(1) }} /
@@ -37,7 +37,7 @@
       </div>
 
       <div class="recent_summary_champs">
-        <p>Preferred champions:</p>
+        <p>近期常用英雄:</p>
         <div class="recent_summary_champs_1">
           <img
           :src="
@@ -48,7 +48,7 @@
           alt="champ img"
           />
           <div>
-            <p>{{ data.wins_preferablyChamps[0] }}W {{ data.defeats_preferablyChamps[0] }}L
+            <p>{{ data.wins_preferablyChamps[0] }}胜 {{ data.defeats_preferablyChamps[0] }}负
               ({{ (data.wins_preferablyChamps[0] * 100 / (data.wins_preferablyChamps[0] + data.defeats_preferablyChamps[0])).toFixed(1) }}%)</p>
             <p>{{ (data.kills_preferablyChamps[0] / (data.wins_preferablyChamps[0] + data.defeats_preferablyChamps[0])).toFixed(1) }}
               /
@@ -69,7 +69,7 @@
           alt="champ img"
           />  
           <div>
-            <p>{{ data.wins_preferablyChamps[1] }}W {{ data.defeats_preferablyChamps[1] }}L
+            <p>{{ data.wins_preferablyChamps[1] }}胜 {{ data.defeats_preferablyChamps[1] }}负
               ({{ (data.wins_preferablyChamps[1] * 100 / (data.wins_preferablyChamps[1] + data.defeats_preferablyChamps[1])).toFixed(1) }}%)</p>
             <p>{{ (data.kills_preferablyChamps[1] / (data.wins_preferablyChamps[1] + data.defeats_preferablyChamps[1])).toFixed(1) }}
               /
@@ -85,29 +85,29 @@
 
 
     <div class="recent_title">
-      <h4>PERFORMANCE OVERVIEW:</h4> 
+      <h4>近期表现:</h4>
     </div>
 
     <div class="recent_overview">
       <div>
         <h3 class="name_yellow">{{ (data.firstBloodTimes * 100 / (data.wins + data.defeats)).toFixed(1) }}%</h3>
-        <p>First Blood %</p>
+        <p>一血参与率 %</p>
       </div>
       <div>
         <h3 class="name_yellow">{{ (data.gold / (data.wins + data.defeats)).toFixed(2) }}</h3>
-        <p>Gold / min</p>
+        <p>经济 / min</p>
       </div>
       <div>
         <h3 class="name_yellow">{{ (data.cs / (data.wins + data.defeats)).toFixed(2) }}</h3>
-        <p>CS / min</p>
+        <p>补刀 / min</p>
       </div>
       <div>
         <h3 class="name_yellow">{{ (data.control_wards / (data.wins + data.defeats)).toFixed(2) }}</h3>
-        <p>Control wards / game</p>
+        <p>视野控制 / game</p>
       </div>
       <div>
         <h3 class="name_yellow">{{ (data.vision_score / (data.wins + data.defeats)).toFixed(2) }}</h3>
-        <p>Vision score / game</p>
+        <p>视野得分 / game</p>
       </div>
 
     </div>

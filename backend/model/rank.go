@@ -18,6 +18,7 @@ type RankDetails struct {
 	RatedRating                    int         `json:"ratedRating"`
 	RatedTier                      string      `json:"ratedTier"`
 	Tier                           string      `json:"tier"`
+	TierOb                         Tier        `json:"tierOb"`
 	Warnings                       interface{} `json:"warnings"` // 使用 interface{} 表示可能是任何类型
 	Wins                           int         `json:"wins"`
 }

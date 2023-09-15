@@ -7,7 +7,9 @@ type DisplayMatch struct {
 	GameDurationInt  int    `json:"gameDurationInt"`
 	GameTimeAgo      string `json:"gameTimeAgo"`
 	// kp是团战参与率
-	Kp                    string                `json:"kp"`
+	Kp string `json:"kp"`
+	// NMValue 牛马值
+	NMValue               int                   `json:"nmValue"`
 	SpellD                Spell                 `json:"spellD"`
 	SpellF                Spell                 `json:"spellF"`
 	RunePrimary           Perk                  `json:"runePrimary"`
@@ -44,6 +46,9 @@ type RecentMatchStatistic struct {
 	Wins          int   `json:"wins"`
 	Defeats       int   `json:"defeats"`
 
+	// 牛马值
+	NMValue int `json:"nmValue"`
+
 	Gold            int `json:"gold"`
 	VisionScore     int `json:"vision_score"`
 	FirstBloodTimes int `json:"firstBloodTimes"`
@@ -71,4 +76,12 @@ type RecentMatchStatistic struct {
 	AssistsPreferablyChamps [2]int `json:"assists_preferablyChamps"`
 	WinsPreferablyChamps    [2]int `json:"wins_preferablyChamps"`
 	DefeatsPreferablyChamps [2]int `json:"defeats_preferablyChamps"`
+}
+
+type Summoner struct {
+	AccountData          SummonerBaseInfo     `json:"dataAccount"`
+	RankSolo             RankDetails          `json:"dataRank_solo"`
+	RankFlex             RankDetails          `json:"dataRank_flex"`
+	RecentMatchStatistic RecentMatchStatistic `json:"matchData"`
+	DisplayMatchRecords  []DisplayMatch       `json:"displayMatchHistory"`
 }

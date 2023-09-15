@@ -1,14 +1,5 @@
 package model
 
-type Summoner struct {
-	AccountData          SummonerBaseInfo     `json:"dataAccount"`
-	RankSolo             RankDetails          `json:"dataRank_solo"`
-	RankFlex             RankDetails          `json:"dataRank_flex"`
-	RecentMatchStatistic RecentMatchStatistic `json:"matchData"`
-	DisplayMatchRecords  []DisplayMatch       `json:"displayMatchHistory"`
-	MatchRecords         []MatchData          `json:"matchHistory"`
-}
-
 type SummonerBaseInfo struct {
 	AccountId                   int          `json:"accountId"`
 	DisplayName                 string       `json:"displayName"`

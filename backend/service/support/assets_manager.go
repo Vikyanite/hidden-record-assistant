@@ -43,6 +43,52 @@ func NewAssetsManager(c *Connector) (m *AssetsManager) {
 					IconPath:    "/lol-game-data/assets/v1/perk-images/Styles/7204_resolve.png",
 				},
 			},
+			Tier: map[string]model.Tier{
+				"": {
+					IconPath: "/assets/images/tier/unranked.png",
+					Name:     "暂无段位",
+				},
+				"IRON": {
+					IconPath: "/assets/images/tier/IRON.png",
+					Name:     "黑铁",
+				},
+				"BRONZE": {
+					IconPath: "/assets/images/tier/BRONZE.png",
+					Name:     "英勇青铜",
+				},
+				"SILVER": {
+					IconPath: "/assets/images/tier/SILVER.png",
+					Name:     "不屈白银",
+				},
+				"GOLD": {
+					IconPath: "/assets/images/tier/GOLD.png",
+					Name:     "荣耀黄金",
+				},
+				"PLATINUM": {
+					IconPath: "/assets/images/tier/PLATINUM.png",
+					Name:     "华贵铂金",
+				},
+				"EMERALD": {
+					IconPath: "/assets/images/tier/EMERALD.png",
+					Name:     "流光翡翠",
+				},
+				"DIAMOND": {
+					IconPath: "/assets/images/tier/DIAMOND.png",
+					Name:     "璀璨钻石",
+				},
+				"MASTER": {
+					IconPath: "/assets/images/tier/MASTER.png",
+					Name:     "超凡大师",
+				},
+				"GRANDMASTER": {
+					IconPath: "/assets/images/tier/GRANDMASTER.png",
+					Name:     "傲世宗师",
+				},
+				"CHALLENGER": {
+					IconPath: "/assets/images/tier/CHALLENGER.png",
+					Name:     "最强王者",
+				},
+			},
 		},
 	}
 	return

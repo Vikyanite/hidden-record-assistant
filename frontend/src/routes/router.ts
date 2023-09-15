@@ -1,29 +1,32 @@
-import Home from '../views/home.vue';
-import { createRouter,createWebHashHistory } from 'vue-router'
-import Personal from "../views/personal.vue";
 
-import Loading from "../views/loading.vue";
-import search from "../views/search.vue";
+import { createRouter,createWebHashHistory } from 'vue-router'
+
+import Home from '../views/home.vue';
 
 const routes = [
     {
         path: '/loading',
-        component: Loading,
+        component: () => import('../views/loading.vue'),
     },
     {
         path: '/home',
         component:Home,
         children: [
             {
-                name: 'personal',
-                path: 'personal',
-                component: Personal
-            },
-            {
                 name: 'search',
                 path: 'search',
-                component: search,
+                component: () => import('../views/search.vue'),
             },
+            {
+                name: 'result',
+                path: 'result/:name',
+                component: () => import('../views/result.vue'),
+            },
+            {
+                name: 'personal',
+                path: 'personal',
+                component: () => import('../views/personal.vue'),
+            }
         ],
     },
 
