@@ -38,6 +38,9 @@ func (a *WailsApp) InitBackend() (data model.InitBackendData, err error) {
 	defer func() func() {
 		start := time.Now()
 		return func() {
+			if err != nil {
+				return
+			}
 			zlog.Debugf("InitBackend Cost: %s", time.Since(start).String())
 		}
 	}()()

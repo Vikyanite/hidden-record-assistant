@@ -17,7 +17,7 @@ import (
 type Connector struct {
 	Client *http.Client
 	Prefix string
-	IsPing uint32
+	State  uint32 // 0: 未初始化 1: 已初始化
 }
 
 func NewConnector() (connector *Connector) {
@@ -56,7 +56,7 @@ func flagsToMap(res []byte) map[string]string {
 	return configMap
 }
 
-func (c *Connector) Init(pingCbfunc func()) (data model.Auth, err error) {
+func (c *Connector) Init(pingCbfunc func()) (auth model.Auth, err error) {
 	defer func() {
 		if recover() != nil {
 			zlog.Errorf("ping panic!")
@@ -68,6 +68,21 @@ func (c *Connector) Init(pingCbfunc func()) (data model.Auth, err error) {
 		}
 	}()
 
+	auth, err = c.getAuth()
+	if err != nil {
+		return
+	}
+
+	c.Prefix = "https://riot:" + auth.Token + "@127.0.0.1:" + auth.Port
+
+	zlog.Debugf("network.Client init success, your prefixURL is: %s", c.Prefix)
+
+	go c.Ping(pingCbfunc)
+
+	return
+}
+
+func (c *Connector) getAuth() (auth model.Auth, err error) {
 	res, err := cmdx.Exec("wmic PROCESS WHERE name='LeagueClientUx.exe' GET commandline")
 	if err != nil {
 		err = errs.InternalError(err)
@@ -86,28 +101,21 @@ func (c *Connector) Init(pingCbfunc func()) (data model.Auth, err error) {
 	}
 
 	Token, Port := flagMap["remoting-auth-token"], flagMap["app-port"]
-	c.Prefix = "https://riot:" + Token + "@127.0.0.1:" + Port
 
-	data = model.Auth{
+	auth = model.Auth{
 		Token: Token,
 		Port:  Port,
 	}
-
-	zlog.Debugf("network.Client init success, your prefixURL is: %s", c.Prefix)
-
-	go c.Ping(pingCbfunc)
-
 	return
 }
 
 func (c *Connector) Ping(cbs func()) {
-	if atomic.LoadUint32(&c.IsPing) == 1 {
+	if atomic.CompareAndSwapUint32(&c.State, 0, 1) {
+		zlog.Errorf("network.Client Ping again")
 		return
 	}
-	atomic.StoreUint32(&c.IsPing, 1)
-	defer func() {
-		atomic.StoreUint32(&c.IsPing, 0)
-	}()
+	defer c.Close()
+
 	for {
 		time.Sleep(time.Second * 1)
 		_, err := cmdx.Exec("tasklist|findstr LeagueClientUx.exe")
@@ -150,4 +158,16 @@ func ExecuteTaskConcurrently(tasks ...func() error) (errChan chan error, num int
 		}(i)
 	}
 	return
+}
+
+func (c *Connector) Close() {
+	if !atomic.CompareAndSwapUint32(&c.State, 1, 0) {
+		zlog.Errorf("network.Client closed again")
+		return
+	}
+	zlog.Errorf("network.Client closed")
+}
+
+func (c *Connector) IsRunning() bool {
+	return atomic.LoadUint32(&c.State) == 1
 }

@@ -7,17 +7,17 @@ import (
 )
 
 type SummonerInquirer struct {
-	conn *Connector
+	*Connector
 }
 
 func NewSummonerInquirer(conn *Connector) *SummonerInquirer {
 	return &SummonerInquirer{
-		conn: conn,
+		Connector: conn,
 	}
 }
 
 func (s *SummonerInquirer) GetCurrentSummonerBaseInfo() (data model.SummonerBaseInfo, err error) {
-	binData, err := s.conn.Get("/lol-summoner/v1/current-summoner")
+	binData, err := s.Get("/lol-summoner/v1/current-summoner")
 	if err != nil {
 		return
 	}
@@ -26,7 +26,7 @@ func (s *SummonerInquirer) GetCurrentSummonerBaseInfo() (data model.SummonerBase
 }
 
 func (s *SummonerInquirer) GetSummonerBaseInfoByName(name string) (data model.SummonerBaseInfo, err error) {
-	binData, err := s.conn.Get("/lol-summoner/v1/summoners?name=" + name)
+	binData, err := s.Get("/lol-summoner/v1/summoners?name=" + name)
 	if err != nil {
 		return
 	}
@@ -36,7 +36,7 @@ func (s *SummonerInquirer) GetSummonerBaseInfoByName(name string) (data model.Su
 
 func (s *SummonerInquirer) GetMatchHistory(puuid string, begI, endI int) (data model.MatchHistory, err error) {
 	url := fmt.Sprintf("/lol-match-history/v1/products/lol/%s/matches?begIndex=%d&endIndex=%d", puuid, begI, endI)
-	binData, err := s.conn.Get(url)
+	binData, err := s.Get(url)
 	if err != nil {
 		return
 	}
@@ -46,7 +46,7 @@ func (s *SummonerInquirer) GetMatchHistory(puuid string, begI, endI int) (data m
 
 func (s *SummonerInquirer) GetMatchDetails(gameId int) (data model.MatchData, err error) {
 	url := fmt.Sprintf("/lol-match-history/v1/games/%d", gameId)
-	binData, err := s.conn.Get(url)
+	binData, err := s.Get(url)
 	if err != nil {
 		return
 	}
@@ -56,7 +56,7 @@ func (s *SummonerInquirer) GetMatchDetails(gameId int) (data model.MatchData, er
 
 func (s *SummonerInquirer) GetRank(puuid string) (data model.Rank, err error) {
 	url := fmt.Sprintf("/lol-ranked/v1/ranked-stats/%s", puuid)
-	binData, err := s.conn.Get(url)
+	binData, err := s.Get(url)
 	if err != nil {
 		return
 	}

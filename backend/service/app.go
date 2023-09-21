@@ -3,6 +3,7 @@ package service
 import (
 	"hidden-record-assistant/backend/model"
 	"hidden-record-assistant/backend/model/conv"
+	"hidden-record-assistant/backend/module/errs"
 	"hidden-record-assistant/backend/module/task"
 	"hidden-record-assistant/backend/service/support"
 	"time"
@@ -29,6 +30,10 @@ func (a *App) Init() (err error) {
 }
 
 func (a *App) GetCurrentSummoner() (data model.Summoner, err error) {
+	if !a.IsRunning() {
+		err = errs.ErrNotRunning
+		return
+	}
 	data.AccountData, err = a.SummonerInquirer.GetCurrentSummonerBaseInfo()
 	if err != nil {
 		return
@@ -38,6 +43,10 @@ func (a *App) GetCurrentSummoner() (data model.Summoner, err error) {
 }
 
 func (a *App) GetSummonerByName(name string) (data model.Summoner, err error) {
+	if !a.IsRunning() {
+		err = errs.ErrNotRunning
+		return
+	}
 	data.AccountData, err = a.SummonerInquirer.GetSummonerBaseInfoByName(name)
 	if err != nil {
 		return
