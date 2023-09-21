@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {useRouter} from "vue-router";
-import Result from "../components/result.vue";
+import Result from "../components/Result.vue";
 import {model} from "../../wailsjs/go/models";
 import {onActivated, Ref, ref} from "vue";
 import {GetSummonerByName} from "../../wailsjs/go/backend/WailsApp";
@@ -28,7 +28,7 @@ onActivated(() => {
 </script>
 
 <template>
-    <Result v-loading="loading" :summoner="summoner"/>
+    <Result  v-loading.fullscreen.lock="loading" :summoner="summoner"/>
 </template>
 
 <style scoped lang="scss">

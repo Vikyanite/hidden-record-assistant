@@ -62,7 +62,7 @@ function Init() {
 </script>
 
 <template>
-  <div>
+  <div class="load-page">
     <el-result
         :icon=result.status
         :title=result.title
@@ -73,9 +73,17 @@ function Init() {
         <el-button v-show="result.status==Status.error" @click="Init" type="primary" size="default">重试</el-button>
       </template>
     </el-result>
-
   </div>
 </template>
 
 <style scoped>
+
+.el-result {
+  height: 100%;
+}
+
+.load-page {
+  height: 100%;
+}
+
 </style>

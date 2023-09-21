@@ -17,46 +17,44 @@ onMounted(()=> {
 </script>
 
 <template>
-  <div>
-    <el-container>
-      <el-aside>
-        <el-menu
-            default-active="/home/personal"
-            mode="vertical"
-            router
-            :collapse="isCollapse"
-        >
-          <el-menu-item @click="isCollapse=!isCollapse" class="menu-collapse-icon">
-            <el-icon v-if="isCollapse"><Expand /></el-icon>
-            <el-icon v-else><Fold /></el-icon>
-          </el-menu-item>
-          <el-divider></el-divider>
-          <el-menu-item index="/home/personal">
-            <el-icon><User /></el-icon>
-            <span class="menu-item-text">个人信息</span>
-          </el-menu-item>
-          <el-menu-item index="/home/search">
-            <el-icon><Search /></el-icon>
-            <span class="menu-item-text">搜索召唤师</span>
-          </el-menu-item>
+  <el-container>
+    <el-aside>
+      <el-menu
+          default-active="/home/personal"
+          mode="vertical"
+          router
+          :collapse="isCollapse"
+      >
+        <el-menu-item @click="isCollapse=!isCollapse" class="menu-collapse-icon">
+          <el-icon v-if="isCollapse"><Expand /></el-icon>
+          <el-icon v-else><Fold /></el-icon>
+        </el-menu-item>
+        <el-divider></el-divider>
+        <el-menu-item index="/home/personal">
+          <el-icon><User /></el-icon>
+          <span class="menu-item-text">个人信息</span>
+        </el-menu-item>
+        <el-menu-item index="/home/search">
+          <el-icon><Search /></el-icon>
+          <span class="menu-item-text">搜索召唤师</span>
+        </el-menu-item>
 
-        </el-menu>
-      </el-aside>
-      <el-container>
-        <!--      <el-header>Header</el-header>-->
-        <el-main>
-          <router-view v-slot="{ Component }">
-            <transition appear>
-              <keep-alive>
-                <component :is="Component"/>
-              </keep-alive>
-            </transition>
-          </router-view>
-        </el-main>
-        <!--      <el-footer>Footer</el-footer>-->
-      </el-container>
+      </el-menu>
+    </el-aside>
+    <el-container>
+      <!--      <el-header>Header</el-header>-->
+      <el-main>
+        <router-view v-slot="{ Component }">
+          <transition appear>
+            <keep-alive>
+              <component :is="Component"/>
+            </keep-alive>
+          </transition>
+        </router-view>
+      </el-main>
+      <!--      <el-footer>Footer</el-footer>-->
     </el-container>
-  </div>
+  </el-container>
 </template>
 
 <style scoped>

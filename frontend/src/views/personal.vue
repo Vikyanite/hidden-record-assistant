@@ -26,7 +26,7 @@
 </script>
 
 <template>
-  <Result v-loading="loading"  :summoner="summoner"/>
+  <Result  v-loading.fullscreen.lock="loading"  :summoner="summoner"/>
 </template>
 
 <style scoped lang="scss">

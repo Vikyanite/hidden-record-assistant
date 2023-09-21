@@ -75,11 +75,11 @@ html {
   --el-menu-item-height: 30px;
 
   --el-menu-item-margin: 0;
+
+  height: var(--wails-app-height);
 }
 
 body {
-
-
   font-family: "Poppins", sans-serif;
   font-weight: 400;
   line-height: 1.7;
