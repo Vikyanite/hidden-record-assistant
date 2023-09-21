@@ -60,17 +60,18 @@ onMounted(()=> {
 </template>
 
 <style scoped>
-
+.el-container {
+  height: 100%;
+}
 
 .el-main {
-  height: 100vh;
-  overflow: visible;
+
 }
 
 .el-menu {
   height:100vh;
-  transition: 0.2s;
-  overflow: visible;
+  transition: 0.15s;
+  overflow: hidden;
 }
 
 .el-aside {
@@ -84,7 +85,7 @@ onMounted(()=> {
 
 .el-menu-item {
   border-radius: 5px;
-  margin: 5px;
+  margin: 0;
 
 }
 

@@ -42,6 +42,12 @@ onMounted(() => {
 @import "./styles/search_page.scss";
 
 :root {
+  --wails-window-height: 720px;
+  --wails-window-width: 1280px;
+  --wails-nav-height: 40px;
+
+  --wails-app-height: calc(var(--wails-window-height) - var(--wails-nav-height));
+
   --color-win: rgb(32,178,170);
   --color-lose: rgb(240, 128, 128);
   --color-remake: rgb(192,192,192);
@@ -62,7 +68,18 @@ html {
   font-size: 62.5%;
   scroll-behavior: smooth;
 }
+
+#app {
+  --el-menu-base-level-padding: 5px;
+  --el-menu-icon-width: 25px;
+  --el-menu-item-height: 30px;
+
+  --el-menu-item-margin: 0;
+}
+
 body {
+
+
   font-family: "Poppins", sans-serif;
   font-weight: 400;
   line-height: 1.7;
@@ -79,11 +96,6 @@ body {
 *::after,
 *::before {
   box-sizing: inherit;
-}
-.loading_spin{
-  width: 4rem;
-  height: 4rem;
-  margin: 2rem 0 2rem 0;
 }
 
 </style>

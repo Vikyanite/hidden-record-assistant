@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import {useRouter} from "vue-router";
-  import Result from "../components/result.vue";
+  import Result from "../components/Result.vue";
   import {model} from "../../wailsjs/go/models";
   import {onActivated, Ref, ref} from "vue";
   import {GetCurrentSummoner} from "../../wailsjs/go/backend/WailsApp";

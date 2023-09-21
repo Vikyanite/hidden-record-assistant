@@ -133,20 +133,11 @@ import { model } from "../../wailsjs/go/models";
 .breakdown{
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  gap: 2rem;
-  margin-top: 2rem;
+
+  margin-top: 0;
   padding: 1rem;
 
-  @media screen and (max-width:1400px) {
-    gap: 1rem;
-  }
 
-  @media screen and (max-width: 600px) {
-    grid-template-columns: 1fr 1fr;
-  }
-  @media screen and (max-width: 450px) {
-    grid-template-columns: 1fr;
-  }
 
   &_box {
     &_bgImg {

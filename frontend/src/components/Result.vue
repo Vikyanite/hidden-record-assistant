@@ -34,7 +34,7 @@ const router = useRouter()
 
     <div class="about_right">
       <div class="about_right_matchesList">
-        <el-scrollbar>
+        <el-scrollbar height="100%">
           <div v-for="(i, index) in summoner.displayMatchHistory" :key="index">
             <Match
                 :data="summoner.displayMatchHistory[index]"
@@ -56,13 +56,12 @@ const router = useRouter()
   gap: 1rem;
 
   &_right {
-    height: 100%;
     &_matchesList {
+      height: calc(var(--wails-app-height) - var(--el-main-padding)*2);
       color: #fffffe;
       background-color: #242629;
       border: 1px solid rgba(114,117,126, 0.2);
       font-size: 1.4rem;
-      margin-bottom: 1rem;
     }
   }
 

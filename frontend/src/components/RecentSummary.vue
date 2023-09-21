@@ -155,9 +155,6 @@ const store = useStore()
     justify-items: center;
     margin-bottom: 2rem;
 
-    @media screen and (max-width: 650px){
-      grid-template-columns: 1fr 1fr;
-    }
 
     &>*{
       background-color: var(--color-remake01);
@@ -170,10 +167,6 @@ const store = useStore()
 
     &>*:not(:last-child) {
       margin-right: 1rem;
-      @media screen and (max-width: 650px){
-        margin-right: 0;
-        margin-bottom: 2rem;
-      }
     }
 
     &_total{
@@ -196,19 +189,12 @@ const store = useStore()
     &_champs{
       font-size: 1.3rem;
       //text-align: left;
-      @media screen and (max-width: 650px){
-        grid-column: 1/-1;
-      }
+
       &_1, &_2{
         display: flex;
         align-items: center;
         justify-content: center;
         text-align: left;
-        @media screen and (max-width: 650px){
-          padding: 1rem;
-        }
-        
-
 
         img{
           width: 4rem;
@@ -219,22 +205,9 @@ const store = useStore()
       &_1{
         margin-top: 1rem;
         margin-bottom: 1rem;
-        @media screen and (max-width: 650px){
-          float: left;
-          margin: 0;
-        }
-        @media screen and (max-width: 450px){
-          float: none;
-        }
+
       }
-      &_2{
-        @media screen and (max-width: 650px){
-          float: right;
-        }
-        @media screen and (max-width: 450px){
-          float: none;
-        }
-      }
+
     }
   }
 
@@ -245,17 +218,7 @@ const store = useStore()
     
     gap: 1rem;
     text-align: center;
-  
-    @media screen and (max-width: 600px){
-      grid-template-columns: 1fr 1fr 1fr;
-    }
 
-    @media screen and (max-width: 500px){
-      grid-template-columns: 1fr 1fr;
-    }
-    @media screen and (max-width: 350px){
-      grid-template-columns: 1fr;
-    }
 
     &>*{
       background-color: var(--color-remake01);

@@ -30,9 +30,9 @@
 <script setup lang="ts">
 import {reactive, ref} from "vue";
 
-import overview from "../components/overview.vue";
-import advanced from "../components/advanced.vue";
-import breakdown from "../components/breakdown.vue";
+import overview from "../components/Overview.vue";
+import advanced from "../components/Advanced.vue";
+import breakdown from "../components/Breakdown.vue";
 import {model} from "../../wailsjs/go/models";
 
   const props = defineProps<{
