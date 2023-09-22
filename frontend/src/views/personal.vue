@@ -2,33 +2,60 @@
   import {useRouter} from "vue-router";
   import Result from "../components/Result.vue";
   import {model} from "../../wailsjs/go/models";
-  import {onActivated, Ref, ref} from "vue";
+  import {onActivated, onMounted, Ref, ref} from "vue";
   import {GetCurrentSummoner} from "../../wailsjs/go/backend/WailsApp";
   import {useStore} from "vuex";
   import {DefaultSummoner} from "../store";
+
+  import {
+    Check, RefreshRight,
+    Search,
+  } from '@element-plus/icons-vue'
 
   const router = useRouter()
   const store = useStore()
   const loading = ref(true)
   const summoner = ref(DefaultSummoner)
 
-  onActivated(() => {
+  onMounted(LoadFunc)
+
+  function LoadFunc() {
     loading.value = true
-   GetCurrentSummoner().then((res: model.Summoner) => {
-     summoner.value = res
-   }).catch((err: any) => {
-     console.log(err)
-   }).finally(() => {
-     loading.value = false
-   })
-  })
+    GetCurrentSummoner().then((res: model.Summoner) => {
+      summoner.value = res
+    }).catch((err: any) => {
+      console.log(err)
+    }).finally(() => {
+      loading.value = false
+    })
+  }
 
 </script>
 
 <template>
-  <Result  v-loading.fullscreen.lock="loading"  :summoner="summoner"/>
+  <div>
+    <Result  v-loading.fullscreen.lock="loading"  :summoner="summoner"/>
+    <el-button
+        v-if="!loading"
+        @click="LoadFunc"
+        circle
+        class="refresh-button"
+    >
+      <el-icon style="width: 25px;height: 25px;">
+        <RefreshRight style="width: 25px;height: 25px;"/>
+      </el-icon>
+    </el-button>
+  </div>
+
 </template>
 
 <style scoped lang="scss">
-
+.refresh-button {
+  width: 50px;
+  height: 50px;
+  position: fixed;
+  right: 40px;
+  bottom: 40px;
+  z-index: 999;
+}
 </style>

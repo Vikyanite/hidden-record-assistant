@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import {ref} from "vue";
+import {computed, ref} from "vue";
 
 import RecentSummary from "./RecentSummary.vue";
 
@@ -9,6 +9,7 @@ import Match from "./Match.vue";
 import {model} from "../../wailsjs/go/models";
 import {useStore} from "vuex";
 import {useRouter} from "vue-router";
+import {GetMatchRecordsByPuuid} from "../../wailsjs/go/backend/WailsApp";
 
 
 const props = defineProps<{
@@ -18,6 +19,34 @@ const props = defineProps<{
 const store = useStore()
 
 const router = useRouter()
+
+const loading = ref(false)
+const noMore = ref(false)
+const disabled = computed(() => loading.value || noMore.value)
+
+const nowMatchIndex = ref(0)
+const endIndex = ref(19)
+
+const delta = 10
+
+const loadHandler = () => {
+  loading.value = true
+
+  GetMatchRecordsByPuuid(props.summoner.dataAccount.puuid, endIndex.value+1, endIndex.value+delta).then((res: model.DisplayMatch[]) => {
+    if (res.length === 0) {
+      noMore.value = true
+      return
+    } else {
+      noMore.value = false
+      props.summoner.displayMatchHistory.push(...res)
+      endIndex.value = endIndex.value+delta
+    }
+  }).catch((err: any) => {
+    console.log(err)
+  }).finally(() => {
+    loading.value = false
+  })
+}
 
 </script>
 
@@ -34,12 +63,20 @@ const router = useRouter()
 
     <div class="about_right">
       <div class="about_right_matchesList">
-        <el-scrollbar height="100%">
-          <div v-for="(i, index) in summoner.displayMatchHistory" :key="index">
-            <Match
+        <el-scrollbar
+            height="100%"
+        >
+          <div
+              v-infinite-scroll="loadHandler"
+              :infinite-scroll-disabled="disabled"
+              infinite-scroll-immediate="false"
+          >
+            <Match v-for="(i, index) in summoner.displayMatchHistory" :key="index"
                 :data="summoner.displayMatchHistory[index]"
             />
           </div>
+          <p v-if="loading">Loading...</p>
+          <p v-if="noMore">No more</p>
         </el-scrollbar>
       </div>
     </div>
@@ -48,7 +85,6 @@ const router = useRouter()
 </template>
 
 <style scoped lang="scss">
-
 .about {
 
   display: grid;
