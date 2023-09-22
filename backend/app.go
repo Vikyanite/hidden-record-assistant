@@ -65,6 +65,13 @@ func (a *WailsApp) GetCurrentSummoner() (data model.Summoner, err error) {
 }
 
 func (a *WailsApp) GetSummonerByName(name string) (data model.Summoner, err error) {
+	zlog.Debugf("GetSummonerByName: %s", name)
 	data, err = a.supportApp.GetSummonerByName(name)
+	return
+}
+
+func (a *WailsApp) GetMatchRecordsByPuuid(puuid string, beg int, end int) (data []model.DisplayMatch, err error) {
+	zlog.Debugf("GetMatchRecordsByPuuid: %s, %d, %d", puuid, beg, end)
+	data, err = a.supportApp.GetDisplayMatchRecordsByPuuid(puuid, beg, end)
 	return
 }
