@@ -6,7 +6,6 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
 	"hidden-record-assistant/backend"
-	"hidden-record-assistant/backend/service/support"
 )
 
 //go:embed all:frontend/dist
@@ -14,7 +13,7 @@ var assets embed.FS
 
 func main() {
 	// Create an instance of the app structure
-	app := backend.NewApp(support.NewConnector())
+	app := backend.NewApp()
 
 	// Create application with options
 	err := wails.Run(&options.App{

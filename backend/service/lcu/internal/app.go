@@ -1,17 +1,17 @@
-package service
+package internal
 
 import (
 	"hidden-record-assistant/backend/model"
 	"hidden-record-assistant/backend/model/conv"
-	"hidden-record-assistant/backend/module/errs"
 	"hidden-record-assistant/backend/module/task"
-	"hidden-record-assistant/backend/service/support"
+
 	"time"
 )
 
 type App struct {
-	*support.AssetsManager
-	*support.SummonerInquirer
+	*Connector
+	*AssetsManager
+	*SummonerInquirer
 }
 
 const (
@@ -19,14 +19,18 @@ const (
 	InitQueryMatchEnd = 19
 )
 
-func NewApp(conn *support.Connector) *App {
+func NewApp(conn *Connector) *App {
 	return &App{
-		AssetsManager:    support.NewAssetsManager(conn),
-		SummonerInquirer: support.NewSummonerInquirer(conn),
+		AssetsManager:    NewAssetsManager(conn),
+		SummonerInquirer: NewSummonerInquirer(conn),
 	}
 }
 
-func (a *App) Init() (err error) {
+func (a *App) Init() (auth model.Auth, exitChan chan struct{}, err error) {
+	auth, exitChan, err = a.Connector.Init()
+	if err != nil {
+		return
+	}
 	err = a.AssetsManager.Init()
 	if err != nil {
 		return
@@ -35,10 +39,6 @@ func (a *App) Init() (err error) {
 }
 
 func (a *App) GetCurrentSummoner() (data model.Summoner, err error) {
-	if !a.IsRunning() {
-		err = errs.ErrNotRunning
-		return
-	}
 	data.AccountData, err = a.SummonerInquirer.GetCurrentSummonerBaseInfo()
 	if err != nil {
 		return
@@ -48,10 +48,6 @@ func (a *App) GetCurrentSummoner() (data model.Summoner, err error) {
 }
 
 func (a *App) GetSummonerByName(name string) (data model.Summoner, err error) {
-	if !a.IsRunning() {
-		err = errs.ErrNotRunning
-		return
-	}
 	data.AccountData, err = a.SummonerInquirer.GetSummonerBaseInfoByName(name)
 	if err != nil {
 		return
@@ -63,7 +59,7 @@ func (a *App) GetSummonerByName(name string) (data model.Summoner, err error) {
 func (a *App) getSummoner(data *model.Summoner) (err error) {
 	defer task.TimeCost("getSummoner")()
 	// 这些任务都是需要等待AccountData的，并且是互相独立的，所以可以并发执行
-	errChan, num := support.ExecuteTaskConcurrently(
+	errChan, num := task.ExecuteTaskConcurrently(
 		func() (err error) {
 			defer task.TimeCost("GetRank")()
 			var rank model.Rank
@@ -122,10 +118,6 @@ func (a *App) getSummoner(data *model.Summoner) (err error) {
 }
 
 func (a *App) GetDisplayMatchRecordsByPuuid(puuid string, beg, end int) (matchRecords []model.DisplayMatch, err error) {
-	if !a.IsRunning() {
-		err = errs.ErrNotRunning
-		return
-	}
 	MatchRecords, err := a.getMatchRecordsByPuuid(puuid, beg, end)
 	if err != nil {
 		return
@@ -146,7 +138,7 @@ func (a *App) matchRecordsToDisplayMatchRecords(puuid string, MatchRecords []mod
 			return
 		})
 	}
-	errChan, num := support.ExecuteTaskConcurrently(tasks...)
+	errChan, num := task.ExecuteTaskConcurrently(tasks...)
 	for i := 0; i < num; i++ {
 		err = <-errChan
 		if err != nil {
@@ -174,7 +166,7 @@ func (a *App) getMatchRecordsByPuuid(puuid string, beg, end int) (MatchRecords [
 			return
 		})
 	}
-	errChan, num := support.ExecuteTaskConcurrently(tasks...)
+	errChan, num := task.ExecuteTaskConcurrently(tasks...)
 	for i := 0; i < num; i++ {
 		err = <-errChan
 		if err != nil {

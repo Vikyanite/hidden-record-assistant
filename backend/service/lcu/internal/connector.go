@@ -1,4 +1,4 @@
-package support
+package internal
 
 import (
 	"crypto/tls"
@@ -56,7 +56,7 @@ func flagsToMap(res []byte) map[string]string {
 	return configMap
 }
 
-func (c *Connector) Init(pingCbfunc func()) (auth model.Auth, err error) {
+func (c *Connector) Init() (auth model.Auth, exitChan chan struct{}, err error) {
 	defer func() {
 		if recover() != nil {
 			zlog.Errorf("ping panic!")
@@ -77,7 +77,7 @@ func (c *Connector) Init(pingCbfunc func()) (auth model.Auth, err error) {
 
 	zlog.Debugf("network.Client init success, your prefixURL is: %s", c.Prefix)
 
-	go c.Ping(pingCbfunc)
+	exitChan = c.Ping()
 
 	return
 }
@@ -109,22 +109,26 @@ func (c *Connector) getAuth() (auth model.Auth, err error) {
 	return
 }
 
-func (c *Connector) Ping(cbs func()) {
+func (c *Connector) Ping() (exitChan chan struct{}) {
+	exitChan = make(chan struct{})
 	if atomic.CompareAndSwapUint32(&c.State, 0, 1) {
-		zlog.Errorf("network.Client Ping again")
+		zlog.Warnf("network.Client Ping again")
 		return
 	}
 	defer c.Close()
 
-	for {
-		time.Sleep(time.Second * 1)
-		_, err := cmdx.Exec("tasklist|findstr LeagueClientUx.exe")
-		if err != nil {
-			zlog.Error("LeagueClientUx.exe not found")
-			cbs()
-			return
+	go func() {
+		for {
+			time.Sleep(time.Second * 1)
+			_, err := cmdx.Exec("tasklist|findstr LeagueClientUx.exe")
+			if err != nil {
+				zlog.Error("LeagueClientUx.exe not found")
+				close(exitChan)
+				return
+			}
 		}
-	}
+	}()
+	return
 }
 
 func (c *Connector) getResponse(url string) (*http.Response, error) {
@@ -138,6 +142,10 @@ func (c *Connector) Get(url string) (data []byte, err error) {
 			return
 		}
 	}()
+	if !c.IsRunning() {
+		err = errs.ErrNotRunning
+		return
+	}
 	resp, err := c.getResponse(url)
 	if err != nil {
 		return
@@ -149,23 +157,12 @@ func (c *Connector) Get(url string) (data []byte, err error) {
 	return
 }
 
-func ExecuteTaskConcurrently(tasks ...func() error) (errChan chan error, num int) {
-	num = len(tasks)
-	errChan = make(chan error, num)
-	for i := range tasks {
-		go func(index int) {
-			errChan <- tasks[index]()
-		}(i)
-	}
-	return
-}
-
 func (c *Connector) Close() {
 	if !atomic.CompareAndSwapUint32(&c.State, 1, 0) {
-		zlog.Errorf("network.Client closed again")
+		zlog.Warnf("network.Client closed again")
 		return
 	}
-	zlog.Errorf("network.Client closed")
+	zlog.Debugf("network.Client closed")
 }
 
 func (c *Connector) IsRunning() bool {

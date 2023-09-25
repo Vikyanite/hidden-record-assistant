@@ -2,6 +2,7 @@ package support
 
 import (
 	"fmt"
+	"hidden-record-assistant/backend/service/lcu"
 	"net/http"
 	"os"
 	"strings"
@@ -9,19 +10,16 @@ import (
 
 type FileLoader struct {
 	http.Handler
-	conn *Connector
 }
 
-func NewFileLoader(conn *Connector) *FileLoader {
-	return &FileLoader{
-		conn: conn,
-	}
+func NewFileLoader() *FileLoader {
+	return &FileLoader{}
 }
 
 func (h *FileLoader) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 	if strings.HasPrefix(req.URL.Path, "/LCUAPI") {
 		url := strings.Replace(req.URL.Path, "/LCUAPI", "", 1)
-		bFile, _ := h.conn.Get(url)
+		bFile, _ := lcu.DefaultApp.Get(url)
 		res.Write(bFile)
 	} else if strings.HasPrefix(req.URL.Path, "/LOCAL") {
 		requestedFilename := strings.Replace(req.URL.Path, "/LOCAL", "./frontend/src", 1)

@@ -1,18 +1,19 @@
-package support
+package internal
 
 import (
 	"encoding/json"
 	"hidden-record-assistant/backend/model"
 	"hidden-record-assistant/backend/module/errs"
+	"hidden-record-assistant/backend/module/task"
 	"strconv"
 )
 
 type AssetsManager struct {
 	model.Assets
-	c *Connector
+	c IConn
 }
 
-func NewAssetsManager(c *Connector) (m *AssetsManager) {
+func NewAssetsManager(c IConn) (m *AssetsManager) {
 	m = &AssetsManager{
 		c: c,
 		Assets: model.Assets{
@@ -95,7 +96,7 @@ func NewAssetsManager(c *Connector) (m *AssetsManager) {
 }
 
 func (m *AssetsManager) Init() error {
-	errChan, num := ExecuteTaskConcurrently(
+	errChan, num := task.ExecuteTaskConcurrently(
 		func() (err error) {
 			binData, err := m.c.Get("/lol-game-data/assets/v1/champion-summary.json")
 			if err != nil {

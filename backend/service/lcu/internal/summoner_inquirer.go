@@ -1,4 +1,4 @@
-package support
+package internal
 
 import (
 	"encoding/json"
@@ -6,13 +6,17 @@ import (
 	"hidden-record-assistant/backend/model"
 )
 
-type SummonerInquirer struct {
-	*Connector
+type IConn interface {
+	Get(url string) ([]byte, error)
 }
 
-func NewSummonerInquirer(conn *Connector) *SummonerInquirer {
+type SummonerInquirer struct {
+	IConn
+}
+
+func NewSummonerInquirer(conn IConn) *SummonerInquirer {
 	return &SummonerInquirer{
-		Connector: conn,
+		IConn: conn,
 	}
 }
 
