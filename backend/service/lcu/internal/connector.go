@@ -58,10 +58,10 @@ func flagsToMap(res []byte) map[string]string {
 
 func (c *Connector) Init() (auth model.Auth, exitChan chan struct{}, err error) {
 	defer func() {
-		if recover() != nil {
-			zlog.Errorf("ping panic!")
-			return
-		}
+		//if recoverErr := recover(); recoverErr != nil {
+		//	zlog.Errorf("ping panic! %s", recoverErr)
+		//	return
+		//}
 		if err != nil {
 			zlog.Errorf("network.Client init failed: %s", err.Error())
 			return

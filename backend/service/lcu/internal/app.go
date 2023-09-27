@@ -21,6 +21,7 @@ const (
 
 func NewApp(conn *Connector) *App {
 	return &App{
+		Connector:        conn,
 		AssetsManager:    NewAssetsManager(conn),
 		SummonerInquirer: NewSummonerInquirer(conn),
 	}
@@ -130,21 +131,21 @@ func (a *App) GetDisplayMatchRecordsByPuuid(puuid string, beg, end int) (matchRe
 func (a *App) matchRecordsToDisplayMatchRecords(puuid string, MatchRecords []model.MatchData) (matchRecords []model.DisplayMatch, err error) {
 	defer task.TimeCost("matchRecordsToDisplayMatchRecords")()
 	matchRecords = make([]model.DisplayMatch, len(MatchRecords))
-	var tasks []func() error
+	//var tasks []func() error
 	for i := 0; i < len(MatchRecords); i++ {
 		index := i
-		tasks = append(tasks, func() (err error) {
-			matchRecords[index] = conv.GetDisplayMatchFromMatchData(puuid, MatchRecords[index], a.AssetsManager)
-			return
-		})
+		//tasks = append(tasks, func() (err error) {
+		matchRecords[index] = conv.GetDisplayMatchFromMatchData(puuid, MatchRecords[index], a.AssetsManager)
+		//	return
+		//})
 	}
-	errChan, num := task.ExecuteTaskConcurrently(tasks...)
-	for i := 0; i < num; i++ {
-		err = <-errChan
-		if err != nil {
-			return
-		}
-	}
+	//errChan, num := task.ExecuteTaskConcurrently(tasks...)
+	//for i := 0; i < num; i++ {
+	//	err = <-errChan
+	//	if err != nil {
+	//		return
+	//	}
+	//}
 	return
 }
 
@@ -154,7 +155,7 @@ func (a *App) getMatchRecordsByPuuid(puuid string, beg, end int) (MatchRecords [
 	if err != nil {
 		return
 	}
-	MatchRecords = make([]model.MatchData, matchHistory.Games.GameCount)
+	MatchRecords = make([]model.MatchData, len(matchHistory.Games.Games))
 	var tasks []func() error
 	for i := range matchHistory.Games.Games {
 		index := i
