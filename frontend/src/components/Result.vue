@@ -13,7 +13,7 @@ import {GetMatchRecordsByPuuid} from "../../wailsjs/go/backend/WailsApp";
 
 
 const props = defineProps<{
-  summoner: model.Summoner,
+  summoner: model.DisplaySummoner,
 }>()
 
 const store = useStore()

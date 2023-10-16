@@ -4,7 +4,7 @@
       <div class="profile_top_stats">
         <div class="profile_top_stats_img">
           <img
-              :src="store.getters.LCUAPIPrefix('/lol-game-data/assets/v1/profile-icons/' + data.profileIconId + '.jpg')"
+              :src="'/lol-game-data/assets/v1/profile-icons/' + data.profileIconId + '.jpg'"
               alt="profile icon"
           />
         </div>
@@ -57,7 +57,7 @@
   defineProps<{
     solo: model.RankDetails,
     flex: model.RankDetails,
-    data: model.SummonerBaseInfo,
+    data: model.Summoner,
   }>()
 
 </script>

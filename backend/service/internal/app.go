@@ -1,17 +1,15 @@
 package internal
 
 import (
+	lcuapi "github.com/Vikyanite/lcu-driver"
+	lcumodel "github.com/Vikyanite/lcu-driver/model"
 	"hidden-record-assistant/backend/model"
-	"hidden-record-assistant/backend/model/conv"
 	"hidden-record-assistant/backend/module/task"
-
 	"time"
 )
 
 type App struct {
-	*Connector
-	*AssetsManager
-	*SummonerInquirer
+	State int32
 }
 
 const (
@@ -19,28 +17,16 @@ const (
 	InitQueryMatchEnd = 19
 )
 
-func NewApp(conn *Connector) *App {
-	return &App{
-		Connector:        conn,
-		AssetsManager:    NewAssetsManager(conn),
-		SummonerInquirer: NewSummonerInquirer(conn),
-	}
+func NewApp() *App {
+	return &App{}
 }
 
-func (a *App) Init() (auth model.Auth, exitChan chan struct{}, err error) {
-	auth, exitChan, err = a.Connector.Init()
-	if err != nil {
-		return
-	}
-	err = a.AssetsManager.Init()
-	if err != nil {
-		return
-	}
-	return
+func (a *App) Start(startCbs ...func() error) (chan error, error) {
+	return lcuapi.Start(startCbs...)
 }
 
-func (a *App) GetCurrentSummoner() (data model.Summoner, err error) {
-	data.AccountData, err = a.SummonerInquirer.GetCurrentSummonerBaseInfo()
+func (a *App) GetCurrentSummoner() (data model.DisplaySummoner, err error) {
+	data.AccountData, err = lcuapi.GetCurrentSummoner()
 	if err != nil {
 		return
 	}
@@ -48,8 +34,8 @@ func (a *App) GetCurrentSummoner() (data model.Summoner, err error) {
 	return
 }
 
-func (a *App) GetSummonerByName(name string) (data model.Summoner, err error) {
-	data.AccountData, err = a.SummonerInquirer.GetSummonerBaseInfoByName(name)
+func (a *App) GetSummonerByName(name string) (data model.DisplaySummoner, err error) {
+	data.AccountData, err = lcuapi.GetSummonerByName(name)
 	if err != nil {
 		return
 	}
@@ -57,20 +43,18 @@ func (a *App) GetSummonerByName(name string) (data model.Summoner, err error) {
 	return
 }
 
-func (a *App) getSummoner(data *model.Summoner) (err error) {
+func (a *App) getSummoner(data *model.DisplaySummoner) (err error) {
 	defer task.TimeCost("getSummoner")()
 	// 这些任务都是需要等待AccountData的，并且是互相独立的，所以可以并发执行
 	errChan, num := task.ExecuteTaskConcurrently(
 		func() (err error) {
 			defer task.TimeCost("GetRank")()
-			var rank model.Rank
-			rank, err = a.SummonerInquirer.GetRank(data.AccountData.Puuid)
+			var rank lcumodel.RankedStats
+			rank, err = lcuapi.GetRankedStatsByPuuid(data.AccountData.Puuid)
 			if err != nil {
 				return
 			}
 			data.RankSolo, data.RankFlex = rank.QueueMap.RANKEDSOLO5X5, rank.QueueMap.RANKEDFLEXSR
-			data.RankSolo.TierOb = a.AssetsManager.Tier[data.RankSolo.Tier]
-			data.RankFlex.TierOb = a.AssetsManager.Tier[data.RankFlex.Tier]
 			return
 		},
 		func() (err error) {
@@ -100,7 +84,7 @@ func (a *App) getSummoner(data *model.Summoner) (err error) {
 				}
 			}
 
-			data.RecentMatchStatistic = conv.GetStatisticFromMatches(data.AccountData.Puuid, MatchRecords)
+			data.RecentMatchStatistic = GetStatisticFromMatches(data.AccountData.Puuid, MatchRecords)
 			if CntInFiveHours != 0 {
 				data.RecentMatchStatistic.NMValue = (NMValueInFiveHours*8/CntInFiveHours + NMValueOutFiveHours*2/CntOutFiveHours) / 10
 			} else if CntOutFiveHours != 0 {
@@ -128,14 +112,14 @@ func (a *App) GetDisplayMatchRecordsByPuuid(puuid string, beg, end int) (matchRe
 	return
 }
 
-func (a *App) matchRecordsToDisplayMatchRecords(puuid string, MatchRecords []model.MatchData) (matchRecords []model.DisplayMatch, err error) {
+func (a *App) matchRecordsToDisplayMatchRecords(puuid string, MatchRecords []lcumodel.MatchData) (matchRecords []model.DisplayMatch, err error) {
 	defer task.TimeCost("matchRecordsToDisplayMatchRecords")()
 	matchRecords = make([]model.DisplayMatch, len(MatchRecords))
 	//var tasks []func() error
 	for i := 0; i < len(MatchRecords); i++ {
 		index := i
 		//tasks = append(tasks, func() (err error) {
-		matchRecords[index] = conv.GetDisplayMatchFromMatchData(puuid, MatchRecords[index], a.AssetsManager)
+		matchRecords[index] = GetDisplayMatchFromMatchData(puuid, MatchRecords[index])
 		//	return
 		//})
 	}
@@ -149,18 +133,18 @@ func (a *App) matchRecordsToDisplayMatchRecords(puuid string, MatchRecords []mod
 	return
 }
 
-func (a *App) getMatchRecordsByPuuid(puuid string, beg, end int) (MatchRecords []model.MatchData, err error) {
+func (a *App) getMatchRecordsByPuuid(puuid string, beg, end int) (MatchRecords []lcumodel.MatchData, err error) {
 	defer task.TimeCost("getMatchRecordsByPuuid")()
-	matchHistory, err := a.GetMatchHistory(puuid, beg, end)
+	matchHistory, err := lcuapi.GetMatchHistoryByPuuid(puuid, beg, end)
 	if err != nil {
 		return
 	}
-	MatchRecords = make([]model.MatchData, len(matchHistory.Games.Games))
+	MatchRecords = make([]lcumodel.MatchData, len(matchHistory.Games.Games))
 	var tasks []func() error
 	for i := range matchHistory.Games.Games {
 		index := i
 		tasks = append(tasks, func() (err error) {
-			MatchRecords[index], err = a.GetMatchDetails(matchHistory.Games.Games[index].GameId)
+			MatchRecords[index], err = lcuapi.GetMatchDetailsByGameId(matchHistory.Games.Games[index].GameId)
 			if err != nil {
 				return
 			}

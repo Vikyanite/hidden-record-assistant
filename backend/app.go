@@ -5,23 +5,21 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 	"hidden-record-assistant/backend/model"
 	"hidden-record-assistant/backend/module/zlog"
-	"hidden-record-assistant/backend/service/lcu"
-	"hidden-record-assistant/backend/service/support"
-	"time"
+	"hidden-record-assistant/backend/service"
 )
 
 // WailsApp struct
 type WailsApp struct {
 	ctx        context.Context
-	lcuApp     *lcu.App
-	FileLoader *support.FileLoader
+	lcuApp     *service.App
+	FileLoader *FileLoader
 }
 
 // NewApp creates a new WailsApp application struct
 func NewApp() (app *WailsApp) {
 	app = &WailsApp{
-		FileLoader: support.NewFileLoader(),
-		lcuApp:     lcu.DefaultApp,
+		FileLoader: NewFileLoader(),
+		lcuApp:     service.DefaultApp,
 	}
 	return
 }
@@ -32,34 +30,27 @@ func (a *WailsApp) Startup(ctx context.Context) {
 	a.ctx = ctx
 }
 
-func (a *WailsApp) InitBackend() (data model.InitBackendData, err error) {
-	defer func() func() {
-		start := time.Now()
-		return func() {
-			if err != nil {
-				return
-			}
-			zlog.Debugf("InitBackend Cost: %s", time.Since(start).String())
-		}
-	}()()
-	var exitChan chan struct{}
-	data.Auth, exitChan, err = a.lcuApp.Init()
+func (a *WailsApp) InitBackend() (err error) {
+	keepalive, err := a.lcuApp.Start()
 	if err != nil {
+		zlog.Errorf("start err: %v", err)
 		return
 	}
+	zlog.Info("start success")
 	go func() {
-		<-exitChan
+		err := <-keepalive
+		zlog.Errorf("keepalive error: %v", err)
 		runtime.EventsEmit(a.ctx, "disconnected")
 	}()
 	return
 }
 
-func (a *WailsApp) GetCurrentSummoner() (data model.Summoner, err error) {
+func (a *WailsApp) GetCurrentSummoner() (data model.DisplaySummoner, err error) {
 	data, err = a.lcuApp.GetCurrentSummoner()
 	return
 }
 
-func (a *WailsApp) GetSummonerByName(name string) (data model.Summoner, err error) {
+func (a *WailsApp) GetSummonerByName(name string) (data model.DisplaySummoner, err error) {
 	zlog.Debugf("GetSummonerByName: %s", name)
 	data, err = a.lcuApp.GetSummonerByName(name)
 	return

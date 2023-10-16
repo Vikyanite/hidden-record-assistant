@@ -18,7 +18,7 @@ onMounted(LoadFunc)
 function LoadFunc() {
   const name = router.currentRoute.value.params.name as string
   loading.value = true
-  GetSummonerByName(name).then((res: model.Summoner) => {
+  GetSummonerByName(name).then((res: model.DisplaySummoner) => {
     summoner.value = res
   }).catch((err: any) => {
     console.log(err)

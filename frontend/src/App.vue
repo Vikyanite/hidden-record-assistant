@@ -15,7 +15,6 @@ onMounted(() => {
     EventsOn("disconnected", (...data: any) => {
       console.log("event: disconnected")
       router.push("/loading")
-      console.log("to loading")
     })
   })
 

@@ -1,5 +1,7 @@
 package model
 
+import lcumodel "github.com/Vikyanite/lcu-driver/model"
+
 type Breakdown struct {
 	Mvp        BreakdownItem `json:"mvp"`
 	HighestCS  BreakdownItem `json:"highestCS"`
@@ -10,7 +12,7 @@ type Breakdown struct {
 }
 
 type BreakdownItem struct {
-	Value          float64  `json:"value"`
-	ChampionObject Champion `json:"championOb"`
-	SummonerName   string   `json:"summonerName"`
+	Value          float64           `json:"value"`
+	ChampionObject lcumodel.Champion `json:"championOb"`
+	SummonerName   string            `json:"summonerName"`
 }

@@ -16,8 +16,8 @@
         <div class="team_overview_obj">
           <Popper placement="top" arrow hover>
             <div class="team_overview_obj_item">
-              <img v-if="index==0" :src="store.getters.LocalAssetPrefix() + '/assets/images/other/tower-100.png'" alt="tower svg">
-              <img v-else :src="store.getters.LocalAssetPrefix() + '/assets/images/other/tower-200.png'" alt="tower svg">
+              <img v-if="index==0" src="../assets/images/other/tower-100.png" alt="tower svg">
+              <img v-else src="../assets/images/other/tower-200.png" alt="tower svg">
               <p>{{matchData.teams[index].towerKills}}</p>
             </div>
             <template #content>
@@ -27,8 +27,8 @@
 
           <Popper placement="top" arrow hover>
             <div class="team_overview_obj_item">
-              <img v-if="index==0" :src="store.getters.LocalAssetPrefix() + '/assets/images/other/inhibitor-100.png'" alt="inhibitor svg">
-              <img v-else :src="store.getters.LocalAssetPrefix() + '/assets/images/other/inhibitor-200.png'" alt="inhibitor svg">
+              <img v-if="index==0" src="../assets/images/other/inhibitor-100.png" alt="inhibitor svg">
+              <img v-else src="../assets/images/other/inhibitor-200.png" alt="inhibitor svg">
               <p>{{matchData.teams[index].inhibitorKills}}</p>
             </div>
             <template #content>
@@ -40,8 +40,8 @@
         <div class="team_overview_monsters">
           <Popper placement="top" arrow hover>
             <div class="team_overview_obj_item">
-              <img v-if="index==0" :src="store.getters.LocalAssetPrefix() + '/assets/images/other/baron-100.png'" alt="baron svg">
-              <img v-else :src="store.getters.LocalAssetPrefix() + '/assets/images/other/baron-200.png'" alt="baron svg">
+              <img v-if="index==0" src="../assets/images/other/baron-100.png" alt="baron svg">
+              <img v-else src="../assets/images/other/baron-200.png" alt="baron svg">
               <p>{{matchData.teams[index].baronKills}}</p>
             </div>
             <template #content>
@@ -50,8 +50,8 @@
           </Popper>
           <Popper placement="top" arrow hover>
             <div class="team_overview_obj_item">
-              <img v-if="index==0" :src="store.getters.LocalAssetPrefix() + '/assets/images/other/herald-100.png'" alt="herald svg">
-              <img v-else :src="store.getters.LocalAssetPrefix() + '/assets/images/other/herald-200.png'" alt="herald svg">
+              <img v-if="index==0" src="../assets/images/other/herald-100.png" alt="herald svg">
+              <img v-else src="../assets/images/other/herald-200.png" alt="herald svg">
               <p>{{matchData.teams[index].riftHeraldKills}}</p>
             </div>
             <template #content>
@@ -60,8 +60,8 @@
           </Popper>
           <Popper placement="top" arrow hover>
             <div class="team_overview_obj_item">
-              <img v-if="index==0" :src="store.getters.LocalAssetPrefix() + '/assets/images/other/dragon-100.png'" alt="dragon svg">
-              <img v-else :src="store.getters.LocalAssetPrefix() + '/assets/images/other/dragon-200.png'" alt="dragon svg">
+              <img v-if="index==0" src="../assets/images/other/dragon-100.png" alt="dragon svg">
+              <img v-else src="../assets/images/other/dragon-200.png" alt="dragon svg">
 
               <p>{{matchData.teams[0].dragonKills}}</p>
             </div>
@@ -73,7 +73,7 @@
 
         <Popper placement="top" arrow hover>
           <div class="team_overview_gold">
-            <img :src="store.getters.LocalAssetPrefix() + '/assets/images/other/icon_gold.png'" alt="gold">
+            <img src="../assets/images/other/icon_gold.png" alt="gold">
             <p v-if="index==0">{{(data.teamBlue.gold/1000).toFixed(1)}}K</p>
             <p v-else>{{(data.teamRed.gold/1000).toFixed(1)}}K</p>
           </div>
@@ -89,7 +89,7 @@
           <div class="team_player" v-if="index == 0 && secIndex < 5 || index == 1 && secIndex >=5 ">
             <Popper placement="top" arrow hover>
               <div class="team_player_level">
-                <img :src="store.getters.LCUAPIPrefix(matchData.participants[secIndex].championOb.squarePortraitPath)" alt="lol stats img">
+                <img :src="matchData.participants[secIndex].championOb.squarePortraitPath" alt="lol stats img">
                 <p>{{matchData.participants[secIndex].stats.champLevel}}</p>
               </div>
               <template #content>
@@ -102,7 +102,7 @@
             <div class="team_player_spells">
               <Popper placement="top" arrow hover>
                 <img
-                    :src="store.getters.LCUAPIPrefix(data.spellDs[secIndex].iconPath)"
+                    :src="data.spellDs[secIndex].iconPath"
                     alt="spell img"
                 />
 
@@ -116,7 +116,7 @@
 
               <Popper placement="top" arrow hover>
                 <img
-                    :src="store.getters.LCUAPIPrefix(data.spellFs[secIndex].iconPath)"
+                    :src="data.spellFs[secIndex].iconPath"
                     alt="spell img"
                 />
 
@@ -157,7 +157,7 @@
                 <div v-if="(matchData.participants[secIndex].stats as any)[j].id == 0">
                   <Popper placement="top" arrow hover>
                     <img
-                        :src="store.getters.LocalAssetPrefix() + '/assets/images/other/gp_ui_placeholder.png'"
+                        src="../assets/images/other/gp_ui_placeholder.png"
                         alt="placeholder"
                     />
 
@@ -169,7 +169,7 @@
                 <div v-else>
                   <Popper placement="top" arrow hover>
                     <img
-                        :src="store.getters.LCUAPIPrefix((matchData.participants[secIndex].stats as any)[j].iconPath)"
+                        :src="(matchData.participants[secIndex].stats as any)[j].iconPath"
                         alt="item"
                     />
                     <template #content>
@@ -198,7 +198,7 @@
     <div class="team_bans">
         <div>
             <div v-for="(i,index) in matchData.teams[0].bans" :key="index">
-                <img style="filter: grayscale(100%);" :src="store.getters.LCUAPIPrefix(matchData.teams[0].bans[index].championOb.squarePortraitPath)" alt="champ img"/>
+                <img style="filter: grayscale(100%);" :src="matchData.teams[0].bans[index].championOb.squarePortraitPath" alt="champ img"/>
             </div>
         </div>
 
@@ -206,7 +206,7 @@
 
         <div>
             <div v-for="(i, index) in matchData.teams[1].bans" :key="index">
-                <img style="filter: grayscale(100%);" :src="store.getters.LCUAPIPrefix(matchData.teams[1].bans[index].championOb.squarePortraitPath)" alt="champ img"/>
+                <img style="filter: grayscale(100%);" :src="matchData.teams[1].bans[index].championOb.squarePortraitPath" alt="champ img"/>
             </div>
         </div>
     </div>

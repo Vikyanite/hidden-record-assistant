@@ -15,7 +15,7 @@
         <div class="match_details_champ" >
 <!--          <p v-if="data.realChampsNames[data.poz]">{{ data.realChampsNames[data.poz] }}</p>-->
           <img
-            :src="store.getters.LCUAPIPrefix(data.participants[data.poz].championOb.squarePortraitPath)"
+            :src="data.participants[data.poz].championOb.squarePortraitPath"
             alt="champ img"
           />
           <p class="match_details_champ_level">{{ data.participants[data.poz].stats.champLevel }}</p>
@@ -24,7 +24,7 @@
         <div class="match_details_spells">
           <Popper placement="top" arrow hover>
             <img
-              :src=" store.getters.LCUAPIPrefix(data.spellD.iconPath)"
+              :src="data.spellD.iconPath"
               alt="spell img"
               class="match_details_spells_spellD"
             />
@@ -39,7 +39,7 @@
 
           <Popper placement="top" arrow hover>
             <img
-              :src="store.getters.LCUAPIPrefix(data.runePrimary.iconPath)"
+              :src="data.runePrimary.iconPath"
               alt="runes img"
               class="match_details_spells_runePrimary"
             />
@@ -55,7 +55,7 @@
           <Popper placement="top" arrow hover>
             <img
                 referrerpolicy="no-referrer"
-                :src=" store.getters.LCUAPIPrefix(data.spellF.iconPath)"
+                :src="data.spellF.iconPath"
               alt="spell img"
               class="match_details_spells_spellF"
             />
@@ -71,14 +71,14 @@
           <Popper placement="top" arrow hover
                   v-if="data.runeSecondaryStyle">
             <img
-              :src="store.getters.LCUAPIPrefix(data.runeSecondaryStyle.iconPath)"
+              :src="data.runeSecondaryStyle.iconPath"
               alt="runes img"
               class="match_details_spells_runeSecondary"
             />
             <template #content>
               <p
                 style="max-width: 400px"
-                v-html="data.runeSecondaryStyle.description"
+                v-html="data.runeSecondaryStyle.tooltip"
               ></p>
             </template>
           </Popper>
@@ -131,7 +131,7 @@
               <div v-else>
                 <Popper placement="top" arrow hover>
                   <img
-                    :src="store.getters.LCUAPIPrefix((data.participants[data.poz].stats as any)[i].iconPath)"
+                    :src="(data.participants[data.poz].stats as any)[i].iconPath"
                     alt="item"
                   />
                   <template #content>

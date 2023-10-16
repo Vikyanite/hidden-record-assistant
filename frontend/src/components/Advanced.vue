@@ -16,7 +16,7 @@
 
     <div class="advanced_champ_list" v-for="(i, index) in matchData.participants" :key="index">
       <div class="advanced_champ_box">
-        <img :src="store.getters.LCUAPIPrefix(matchData.participants[index].championOb.squarePortraitPath)" alt="lol stats img">
+        <img :src="matchData.participants[index].championOb.squarePortraitPath" alt="lol stats img">
         <p style="white-space: nowrap;">{{matchData.participants[index].championOb.name}}</p>
       </div>
     </div>

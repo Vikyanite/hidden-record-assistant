@@ -25,7 +25,7 @@ const Result = {
   },
   info: {
     title: "加载中",
-    subTitle: "正在请求后台服务",
+    subTitle: "正在初始化后台服务",
     status: Status.info
   },
   error: {
@@ -41,22 +41,20 @@ const store = useStore()
 
 function Init() {
   result.value = Result.info
-  setTimeout(() => {
-    InitBackend()
-        .then((res) => {
-          result.value = Result.success
-          store.commit('SetState', res);
-          setTimeout(() => {
-            router.push("/home")
-          }, 1000)
-          //router.push("/home")
 
-        })
-        .catch((err: any) => {
-          result.value = Result.error
-          Result.error.subTitle = err.toString()
-        })
-  }, 1000)
+  InitBackend()
+      .then((res) => {
+        console.log("init backend success")
+        result.value = Result.success
+        //store.commit('SetState', res);
+        router.push("/home")
+        //router.push("/home")
+      })
+      .catch((err: any) => {
+        result.value = Result.error
+        Result.error.subTitle = err.toString()
+      })
+
 }
 
 </script>

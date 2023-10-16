@@ -1,22 +1,13 @@
-package conv
+package internal
 
 import (
 	"fmt"
+	lcumodel "github.com/Vikyanite/lcu-driver/model"
 	"hidden-record-assistant/backend/model"
-	"strings"
 	"time"
 )
 
-type IAssets interface {
-	GetChampionById(id int) model.Champion
-	GetQueueById(id int) model.Queue
-	GetPerkById(id int) model.Perk
-	GetPerkStyleById(id int) model.PerkStyle
-	GetItemById(id int) model.Item
-	GetSpellById(id int) model.Spell
-}
-
-func GetStatisticFromMatches(puuid string, allMatches []model.MatchData) (ret model.RecentMatchStatistic) {
+func GetStatisticFromMatches(puuid string, allMatches []lcumodel.MatchData) (ret model.RecentMatchStatistic) {
 
 	// 寻找主玩家在每个比赛记录中的的index
 	for i := range allMatches {
@@ -122,7 +113,7 @@ func GetStatisticFromMatches(puuid string, allMatches []model.MatchData) (ret mo
 	return
 }
 
-func GetNMValueFromMatches(match model.MatchData, MainPlayerPoz int) (NMValue int) {
+func GetNMValueFromMatches(match lcumodel.MatchData, MainPlayerPoz int) (NMValue int) {
 
 	// 牛马值计算
 	NMValue = 100 // 牛马值默认初始值100
@@ -420,8 +411,7 @@ func findMostFrequentElements(arr []int) (max1, cnt1, max2, cnt2 int) {
 	return mostFrequent[0], counts[mostFrequent[0]], mostFrequent[1], counts[mostFrequent[1]]
 }
 
-func GetDisplayMatchFromMatchData(puuid string, match model.MatchData, manager IAssets) (data model.DisplayMatch) {
-	FixMatchData(&match, manager)
+func GetDisplayMatchFromMatchData(puuid string, match lcumodel.MatchData) (data model.DisplayMatch) {
 	// Poz
 	var Poz int
 	for i := range match.ParticipantIdentities {
@@ -558,35 +548,4 @@ func msToTime(duration int) (gameTimeAgo string) {
 		gameTimeAgo = fmt.Sprintf("%d 天", days)
 	}
 	return
-}
-
-func FixMatchData(match *model.MatchData, manager IAssets) {
-	match.QueueObject = manager.GetQueueById(match.QueueId)
-	//因为 "排位赛 单双排/灵活组排"这个描述太长了，所以要处理一下,去掉"排位赛"前缀
-	match.QueueObject.Description = strings.Replace(match.QueueObject.Description, "排位赛", "", 1)
-
-	for i := range match.Participants {
-		match.Participants[i].Spell1Object = manager.GetSpellById(match.Participants[i].Spell1Id)
-		match.Participants[i].Spell2Object = manager.GetSpellById(match.Participants[i].Spell2Id)
-
-		match.Participants[i].Stats.Perk0Object = manager.GetPerkById(match.Participants[i].Stats.Perk0)
-
-		match.Participants[i].Stats.PerkSubStyleObject = manager.GetPerkStyleById(match.Participants[i].Stats.PerkSubStyle)
-
-		match.Participants[i].ChampionObject = manager.GetChampionById(match.Participants[i].ChampionId)
-
-		match.Participants[i].Stats.Item0Object = manager.GetItemById(match.Participants[i].Stats.Item0)
-		match.Participants[i].Stats.Item1Object = manager.GetItemById(match.Participants[i].Stats.Item1)
-		match.Participants[i].Stats.Item2Object = manager.GetItemById(match.Participants[i].Stats.Item2)
-		match.Participants[i].Stats.Item3Object = manager.GetItemById(match.Participants[i].Stats.Item3)
-		match.Participants[i].Stats.Item4Object = manager.GetItemById(match.Participants[i].Stats.Item4)
-		match.Participants[i].Stats.Item5Object = manager.GetItemById(match.Participants[i].Stats.Item5)
-		match.Participants[i].Stats.Item6Object = manager.GetItemById(match.Participants[i].Stats.Item6)
-	}
-	for i := range match.Teams {
-		for j := range match.Teams[i].Bans {
-			match.Teams[i].Bans[j].ChampionObject = manager.GetChampionById(match.Teams[i].Bans[j].ChampionId)
-		}
-	}
-
 }

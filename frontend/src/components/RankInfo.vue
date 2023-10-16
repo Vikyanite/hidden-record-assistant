@@ -18,7 +18,7 @@ defineProps<{
         <h3 class="rank_title"> {{ data.queueType == "RANKED_SOLO_5x5" ? "单排 / 双排" : "灵活组排" }} </h3>
         <Popper placement="bottom" arrow hover>
           <img
-              :src="store.getters.LocalAssetPrefix() + data.tierOb.iconPath"
+              :src="data.tierOb.iconPath"
               :alt="data.tier"
           />
           <template #content>

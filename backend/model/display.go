@@ -1,5 +1,7 @@
 package model
 
+import lcumodel "github.com/Vikyanite/lcu-driver/model"
+
 type DisplayMatch struct {
 	Poz              int    `json:"poz"`
 	QueueDescription string `json:"queueDescription"`
@@ -9,25 +11,25 @@ type DisplayMatch struct {
 	// kp是团战参与率
 	Kp string `json:"kp"`
 	// NMValue 牛马值
-	NMValue               int                   `json:"nmValue"`
-	SpellD                Spell                 `json:"spellD"`
-	SpellF                Spell                 `json:"spellF"`
-	RunePrimary           Perk                  `json:"runePrimary"`
-	RuneSecondary         PerkStyle             `json:"runeSecondaryStyle"`
-	ToggleAdvancedDetails bool                  `json:"toggleAdvancedDetails"`
-	RealChampsNames       []string              `json:"realChampsNames"`
-	Participants          []Participant         `json:"participants"`
-	ParticipantIdentities []ParticipantIdentity `json:"participantIdentities"`
-	Overview              Overview              `json:"overview"`
-	Breakdown             Breakdown             `json:"breakdown"`
-	Teams                 []Team                `json:"teams"`
+	NMValue               int                            `json:"nmValue"`
+	SpellD                lcumodel.Spell                 `json:"spellD"`
+	SpellF                lcumodel.Spell                 `json:"spellF"`
+	RunePrimary           lcumodel.Perk                  `json:"runePrimary"`
+	RuneSecondary         lcumodel.PerkStyle             `json:"runeSecondaryStyle"`
+	ToggleAdvancedDetails bool                           `json:"toggleAdvancedDetails"`
+	RealChampsNames       []string                       `json:"realChampsNames"`
+	Participants          []lcumodel.Participant         `json:"participants"`
+	ParticipantIdentities []lcumodel.ParticipantIdentity `json:"participantIdentities"`
+	Overview              Overview                       `json:"overview"`
+	Breakdown             Breakdown                      `json:"breakdown"`
+	Teams                 []lcumodel.Team                `json:"teams"`
 }
 
 type Overview struct {
-	TeamRed  DisplayTeam `json:"teamRed"`
-	TeamBlue DisplayTeam `json:"teamBlue"`
-	SpellDs  []Spell     `json:"spellDs"`
-	SpellFs  []Spell     `json:"spellFs"`
+	TeamRed  DisplayTeam      `json:"teamRed"`
+	TeamBlue DisplayTeam      `json:"teamBlue"`
+	SpellDs  []lcumodel.Spell `json:"spellDs"`
+	SpellFs  []lcumodel.Spell `json:"spellFs"`
 }
 
 type DisplayTeam struct {
@@ -78,10 +80,10 @@ type RecentMatchStatistic struct {
 	DefeatsPreferablyChamps [2]int `json:"defeats_preferablyChamps"`
 }
 
-type Summoner struct {
-	AccountData          SummonerBaseInfo     `json:"dataAccount"`
-	RankSolo             RankDetails          `json:"dataRank_solo"`
-	RankFlex             RankDetails          `json:"dataRank_flex"`
+type DisplaySummoner struct {
+	AccountData          lcumodel.Summoner    `json:"dataAccount"`
+	RankSolo             lcumodel.RankDetails `json:"dataRank_solo"`
+	RankFlex             lcumodel.RankDetails `json:"dataRank_flex"`
 	RecentMatchStatistic RecentMatchStatistic `json:"matchData"`
 	DisplayMatchRecords  []DisplayMatch       `json:"displayMatchHistory"`
 }

@@ -21,7 +21,7 @@
 
   function LoadFunc() {
     loading.value = true
-    GetCurrentSummoner().then((res: model.Summoner) => {
+    GetCurrentSummoner().then((res: model.DisplaySummoner) => {
       summoner.value = res
     }).catch((err: any) => {
       console.log(err)

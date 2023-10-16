@@ -1,17 +1,17 @@
 package backend
 
 import (
-	"hidden-record-assistant/backend/service/support"
 	"testing"
 )
 
 func Test(t *testing.T) {
-	conn := support.NewConnector()
-	app := NewApp(conn)
-	init, err := app.InitBackend()
+	app := NewApp()
+	err := app.InitBackend()
+	binData, err := app.GetSummonerByName("remakeoui9")
 	if err != nil {
 		t.Error(err)
 		return
 	}
-	t.Log(init)
+	t.Log(binData)
+
 }

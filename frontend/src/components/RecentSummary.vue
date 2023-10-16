@@ -21,7 +21,7 @@
       <div class="recent_summary_lane">
         <p>近期常用位置:</p>
         <div class="recent_summary_lane_name">
-          <img :src="store.getters.LocalAssetPrefix() + '/assets/images/lane/' + data.preferablyLane + '.png'" class="lane-icon" alt="lane">
+          <img :src="'../assets/images/lane/' + data.preferablyLane + '.png'" class="lane-icon" alt="lane">
           <p v-if="data.preferablyLane == 'utility'">{{data.preferablyLane}}
             ({{ (data.preferablyLaneGames * 100 / (data.wins + data.defeats)).toFixed(0) }}%)</p>
           <p v-else>{{ data.preferablyLane }}
